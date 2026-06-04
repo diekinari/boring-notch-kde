@@ -4,7 +4,10 @@
 #include <QHash>
 #include <QList>
 
-class MprisPlayer;
+// Full definition required (not just a forward declaration): MprisManager
+// exposes Q_PROPERTY(MprisPlayer *active ...), and Qt6's moc needs the pointed-to
+// type to be complete to register its meta type.
+#include "MprisPlayer.h"
 
 // Discovers MPRIS players on the session bus, tracks them appearing/vanishing,
 // and exposes whichever one is "active" (prefers a Playing player). This is the
