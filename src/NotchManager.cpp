@@ -22,7 +22,9 @@ void NotchManager::start() {
     } else {
         QObject *obj = settingsComp.create(m_engine->rootContext());
         m_settingsWindow = qobject_cast<QQuickWindow *>(obj);
-        if (m_settingsWindow) m_settingsWindow->setParent(this);
+        // QObject:: qualifier is required: QWindow::setParent(QWindow*) hides
+        // QObject::setParent(QObject*), so an unqualified call wouldn't compile.
+        if (m_settingsWindow) m_settingsWindow->QObject::setParent(this);
     }
 
     // Rebuild when monitors are added/removed or the primary screen changes.
@@ -59,7 +61,7 @@ QQuickWindow *NotchManager::createNotch(QScreen *screen) {
         delete obj;
         return nullptr;
     }
-    win->setParent(this);
+    win->QObject::setParent(this); // see note above re: QWindow::setParent hiding
 
     // Bind to the target output, then promote to a layer-shell surface, both
     // before the window is shown.
