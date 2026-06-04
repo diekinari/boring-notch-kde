@@ -57,6 +57,15 @@ target_link_libraries(boring-notch-kde PRIVATE
     LayerShellQt::Interface
 )
 
-install(TARGETS boring-notch-kde RUNTIME DESTINATION bin)
+include(GNUInstallDirs)
+
+install(TARGETS boring-notch-kde RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+# Desktop entry -> shows up in the KDE application launcher.
 install(FILES data/org.theboringteam.boringnotchkde.desktop
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+
+# App icon -> used by the launcher entry and the system-tray icon
+# (Icon=boring-notch-kde resolves to this themed icon).
+install(FILES data/boring-notch-kde.svg
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps)

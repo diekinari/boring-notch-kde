@@ -84,13 +84,47 @@ If it prints `x11`, log out and pick "Plasma (Wayland)" on the login screen.
   appears but shows no track info (the last one usually means no MPRIS player
   is publishing — confirm with `playerctl metadata` if you have `playerctl`).
 
-## Install
+## Run as an app (no terminal)
+
+Running `./build/boring-notch-kde` ties the app to that terminal — closing it
+kills the app. To run it like a normal application, **install** it so it shows up
+in the KDE launcher and (optionally) starts on login.
+
+**System-wide (recommended):**
 
 ```bash
 sudo cmake --install build
-# autostart on login:
+```
+
+This installs the binary to `/usr/bin`, a desktop entry, and an icon. Now open
+the KDE app launcher (Meta key), search **"Boring Notch"**, and launch it — it
+runs detached, so you can close the terminal entirely. To uninstall:
+`sudo xargs rm < build/install_manifest.txt`.
+
+**User-local (no sudo):** reconfigure with a home prefix, then install:
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+cmake --build build -j$(nproc)
+cmake --install build
+```
+
+(`~/.local/bin` must be on your `PATH` and `~/.local/share` on `XDG_DATA_DIRS` —
+both are defaults on Arch/Plasma.)
+
+**Start automatically on login:**
+
+```bash
 cp data/org.theboringteam.boringnotchkde.desktop ~/.config/autostart/
 ```
+
+**Just want to detach it right now without installing?**
+
+```bash
+setsid -f ./build/boring-notch-kde   # runs in its own session; survives the terminal
+```
+
+Quit the app from its **tray icon → Quit**, or the notch's right-click menu.
 
 A PKGBUILD for the AUR lives in `packaging/` (WIP).
 
