@@ -1,22 +1,24 @@
 #include "NotchWindow.h"
 
 #include <QQuickWindow>
+#include <QScreen>
 
 #include <LayerShellQt/Window>
 
 NotchWindow::NotchWindow(QObject *parent) : QObject(parent) {}
 
-void NotchWindow::configureLayerShell(QQuickWindow *window) {
+void NotchWindow::configureLayerShell(QQuickWindow *window, QScreen *screen) {
     if (!window) return;
 
     // LayerShellQt::Window::get() attaches layer-shell role to the QWindow.
     auto *layer = LayerShellQt::Window::get(window);
 
-    // Place the surface on the output the QWindow was assigned to
-    // (QWindow::setScreen). Without this LayerShellQt lets the compositor pick
-    // the output, so every notch lands on the same (primary) screen and the
-    // external monitors get none.
-    layer->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
+    // Bind the surface to a specific output. The old setScreenConfiguration()
+    // API (reading QWindow::screen()) is deprecated and ignored — every notch
+    // ended up on the compositor's active screen. The current API is to set the
+    // screen on the layer Window itself and opt out of "follow active screen".
+    if (screen) layer->setScreen(screen);
+    layer->setWantsToBeOnActiveScreen(false);
 
     // Top layer: above normal windows but below fullscreen-exclusive surfaces.
     layer->setLayer(LayerShellQt::Window::LayerTop);

@@ -3,6 +3,7 @@
 #include <QObject>
 
 class QQuickWindow;
+class QScreen;
 
 // Configures the QML window as a wlr-layer-shell surface anchored to the top
 // edge of the screen, centred horizontally, so it floats above normal windows
@@ -15,7 +16,7 @@ class NotchWindow : public QObject {
 public:
     explicit NotchWindow(QObject *parent = nullptr);
 
-    // Promote an already-created QQuickWindow to a top-anchored layer surface.
-    // Must be called before the window is first shown.
-    static void configureLayerShell(QQuickWindow *window);
+    // Promote an already-created QQuickWindow to a top-anchored layer surface
+    // bound to the given output. Must be called before the window is shown.
+    static void configureLayerShell(QQuickWindow *window, QScreen *screen);
 };

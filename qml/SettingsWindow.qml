@@ -179,6 +179,17 @@ ApplicationWindow {
                         }
                     }
 
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 18
+                        Layout.rightMargin: 18
+                        Item { Layout.fillWidth: true }
+                        Button {
+                            text: qsTr("Reset to defaults")
+                            onClicked: Config.resetNotchGeometry()
+                        }
+                    }
+
                     Item { Layout.fillHeight: true; Layout.preferredHeight: 18 }
                 }
             }

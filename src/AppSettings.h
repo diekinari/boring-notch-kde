@@ -72,6 +72,9 @@ public:
     void setClosedCornerRadius(int v);
     void setOpenCornerRadius(int v);
 
+    // Restore the notch size/radius to the built-in defaults (macOS-like).
+    Q_INVOKABLE void resetNotchGeometry();
+
 Q_SIGNALS:
     void alwaysShowTabsChanged();
     void settingsIconInNotchChanged();
@@ -110,10 +113,17 @@ private:
     bool m_claudeIndicatorEnabled = false;
 
     // Defaults mirror the macOS original (see Notch.qml comments).
-    int m_closedNotchWidth = 185;
-    int m_closedNotchHeight = 32;
-    int m_openNotchWidth = 640;
-    int m_openNotchHeight = 190;
-    int m_closedCornerRadius = 14;
-    int m_openCornerRadius = 24;
+    static constexpr int kDefClosedW = 185;
+    static constexpr int kDefClosedH = 32;
+    static constexpr int kDefOpenW = 640;
+    static constexpr int kDefOpenH = 190;
+    static constexpr int kDefClosedR = 14;
+    static constexpr int kDefOpenR = 24;
+
+    int m_closedNotchWidth = kDefClosedW;
+    int m_closedNotchHeight = kDefClosedH;
+    int m_openNotchWidth = kDefOpenW;
+    int m_openNotchHeight = kDefOpenH;
+    int m_closedCornerRadius = kDefClosedR;
+    int m_openCornerRadius = kDefOpenR;
 };

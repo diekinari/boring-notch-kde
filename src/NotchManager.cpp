@@ -66,7 +66,7 @@ QQuickWindow *NotchManager::createNotch(QScreen *screen) {
     // Bind to the target output, then promote to a layer-shell surface, both
     // before the window is shown.
     win->setScreen(screen);
-    NotchWindow::configureLayerShell(win);
+    NotchWindow::configureLayerShell(win, screen);
     win->setVisible(true);
     qInfo() << "[notch] created notch on screen" << screen->name()
             << "-> window now on" << (win->screen() ? win->screen()->name() : "<null>");

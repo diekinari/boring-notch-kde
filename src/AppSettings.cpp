@@ -63,6 +63,16 @@ DEFINE_INT_SETTER(setOpenCornerRadius, m_openCornerRadius, "openCornerRadius", o
 
 #undef DEFINE_INT_SETTER
 
+void AppSettings::resetNotchGeometry() {
+    // Use the setters so values persist and the UI/notch update live.
+    setClosedNotchWidth(kDefClosedW);
+    setClosedNotchHeight(kDefClosedH);
+    setOpenNotchWidth(kDefOpenW);
+    setOpenNotchHeight(kDefOpenH);
+    setClosedCornerRadius(kDefClosedR);
+    setOpenCornerRadius(kDefOpenR);
+}
+
 void AppSettings::setSliderColor(const QString &v) {
     if (m_sliderColor == v) return;
     m_sliderColor = v;
