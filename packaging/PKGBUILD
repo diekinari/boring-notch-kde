@@ -1,0 +1,32 @@
+# Maintainer: you <you@example.com>
+# WIP AUR package for boring-notch-kde
+pkgname=boring-notch-kde-git
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Linux/KDE reimplementation of boring.notch — a top-edge media/info overlay"
+arch=('x86_64' 'aarch64')
+url="https://github.com/TheBoredTeam/boring.notch"
+license=('GPL3')
+depends=('qt6-base' 'qt6-declarative' 'qt6-wayland' 'layer-shell-qt')
+makedepends=('cmake' 'extra-cmake-modules' 'git')
+provides=('boring-notch-kde')
+conflicts=('boring-notch-kde')
+source=("git+https://github.com/YOURNAME/boring-notch-kde.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd boring-notch-kde
+  git describe --long --tags 2>/dev/null | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g' \
+    || printf "0.1.0.r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -B build -S boring-notch-kde \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}

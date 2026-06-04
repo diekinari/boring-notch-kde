@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Boring Notch (KDE)
+Comment=A dynamic top-edge overlay: media controls, calendar, battery and more
+Exec=boring-notch-kde
+Icon=boring-notch-kde
+Categories=Utility;Qt;KDE;
+Terminal=false
+X-KDE-autostart-phase=2

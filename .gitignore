@@ -1,0 +1,23 @@
+# Build output
+/build/
+/builddir/
+*.user
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+
+# Qt
+*.qmlc
+*.jsc
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# Editors
+.vscode/
+.idea/
+.cache/
+compile_commands.json
