@@ -12,6 +12,8 @@ and more.
 > - Top-edge layer-shell overlay (Wayland) that expands on hover
 > - Media controls via **MPRIS** over D-Bus (works with Spotify, browsers, VLC,
 >   any MPRIS2 player) — play/pause, next/prev, title/artist/album art
+> - **Multi-monitor**: a notch per connected display (on by default), rebuilt
+>   live when monitors are plugged/unplugged
 > - **System-tray icon** + right-click context menu on the notch
 > - **Settings window** with an Appearance page mirroring the macOS original,
 >   persisted via QSettings (`~/.config/TheBoringTeam/boring-notch-kde.conf`).

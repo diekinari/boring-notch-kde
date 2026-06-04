@@ -52,6 +52,12 @@ ApplicationWindow {
                             checked: Config.settingsIconInNotch
                             onToggled: value => Config.settingsIconInNotch = value
                         }
+                        ToggleRow {
+                            label: qsTr("Show notch on all displays")
+                            subtitle: qsTr("Mirror the notch onto every connected monitor.")
+                            checked: Config.showOnAllDisplays
+                            onToggled: value => Config.showOnAllDisplays = value
+                        }
                     }
 
                     SettingsGroup {

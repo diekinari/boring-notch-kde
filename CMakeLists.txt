@@ -24,6 +24,8 @@ qt_add_executable(boring-notch-kde
     src/main.cpp
     src/NotchWindow.cpp
     src/NotchWindow.h
+    src/NotchManager.cpp
+    src/NotchManager.h
     src/MprisManager.cpp
     src/MprisManager.h
     src/MprisPlayer.cpp
@@ -38,7 +40,7 @@ qt_add_qml_module(boring-notch-kde
     URI BoringNotch
     VERSION 1.0
     QML_FILES
-        qml/Main.qml
+        qml/Notch.qml
         qml/SettingsWindow.qml
         qml/components/MusicView.qml
         qml/components/MarqueeText.qml

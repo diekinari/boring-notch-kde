@@ -4,9 +4,10 @@ import QtQuick.Controls
 import BoringNotch
 import "components"
 
-// The notch overlay. Collapsed it is a slim pill hugging the top edge; on hover
-// (or while music is playing) it expands to reveal the music view. Mirrors the
-// open/close behaviour of the macOS BoringNotchWindow, minus the physical notch.
+// A single notch overlay. One instance is created per target screen by the
+// C++ NotchManager, which assigns it to its screen and configures the
+// layer-shell surface before showing it (hence visible:false here). Collapsed
+// it is a slim pill hugging the top edge; on hover it expands to the music view.
 Window {
     id: root
 
@@ -24,7 +25,7 @@ Window {
 
     width: expanded ? expandedWidth : collapsedWidth
     height: expanded ? expandedHeight : collapsedHeight
-    visible: true
+    visible: false   // shown by NotchManager once placed on its screen
     color: "transparent"
     flags: Qt.FramelessWindowHint
 
@@ -108,22 +109,6 @@ Window {
             visible: root.expanded
             opacity: visible ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 200 } }
-        }
-    }
-
-    // Standalone settings window. Hidden until requested from the tray icon or
-    // the notch's context menu / gear.
-    SettingsWindow {
-        id: settingsWindow
-        visible: false
-    }
-
-    Connections {
-        target: App
-        function onSettingsRequested() {
-            settingsWindow.show();
-            settingsWindow.raise();
-            settingsWindow.requestActivate();
         }
     }
 }

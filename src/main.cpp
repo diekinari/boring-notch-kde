@@ -1,8 +1,6 @@
 #include <QApplication>
-#include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QQuickWindow>
-#include <QtQml/qqmlregistration.h>
+#include <QQmlEngine>
 
 #include <LayerShellQt/Shell>
 
@@ -10,7 +8,7 @@
 #include "AppSettings.h"
 #include "MprisManager.h"
 #include "MprisPlayer.h"
-#include "NotchWindow.h"
+#include "NotchManager.h"
 
 int main(int argc, char *argv[]) {
     // Must be called before the application so Qt's Wayland plugin loads the
@@ -30,24 +28,18 @@ int main(int argc, char *argv[]) {
     AppController controller;
     MprisManager mpris;
 
-    QQmlApplicationEngine engine;
+    QQmlEngine engine;
     QQmlContext *ctx = engine.rootContext();
     ctx->setContextProperty(QStringLiteral("Config"), &settings);
     ctx->setContextProperty(QStringLiteral("App"), &controller);
     ctx->setContextProperty(QStringLiteral("Mpris"), &mpris);
 
-    // Promote only the notch (root) window to a layer-shell surface; the
-    // settings window is a normal window and must stay untouched.
-    QObject::connect(
-        &engine, &QQmlApplicationEngine::objectCreated, &app,
-        [](QObject *obj, const QUrl &) {
-            if (auto *win = qobject_cast<QQuickWindow *>(obj)) {
-                NotchWindow::configureLayerShell(win);
-            }
-        });
-
-    engine.loadFromModule(QStringLiteral("BoringNotch"), QStringLiteral("Main"));
-    if (engine.rootObjects().isEmpty()) return -1;
+    // NotchManager creates one layer-shell notch per screen plus the settings
+    // window, and rebuilds when monitors change or the option toggles.
+    NotchManager notches(&engine, &settings);
+    QObject::connect(&controller, &AppController::settingsRequested, &notches,
+                     &NotchManager::showSettings);
+    notches.start();
 
     controller.setupTray();
 

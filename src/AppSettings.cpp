@@ -8,6 +8,7 @@ AppSettings::AppSettings(QObject *parent)
     // Load persisted values, falling back to the in-class defaults.
     m_alwaysShowTabs = m_store.value(QStringLiteral("alwaysShowTabs"), m_alwaysShowTabs).toBool();
     m_settingsIconInNotch = m_store.value(QStringLiteral("settingsIconInNotch"), m_settingsIconInNotch).toBool();
+    m_showOnAllDisplays = m_store.value(QStringLiteral("showOnAllDisplays"), m_showOnAllDisplays).toBool();
     m_coloredSpectrogram = m_store.value(QStringLiteral("coloredSpectrogram"), m_coloredSpectrogram).toBool();
     m_realtimeAudioWaveform = m_store.value(QStringLiteral("realtimeAudioWaveform"), m_realtimeAudioWaveform).toBool();
     m_playerColorTinting = m_store.value(QStringLiteral("playerColorTinting"), m_playerColorTinting).toBool();
@@ -29,6 +30,7 @@ AppSettings::AppSettings(QObject *parent)
 
 DEFINE_BOOL_SETTER(setAlwaysShowTabs, m_alwaysShowTabs, "alwaysShowTabs", alwaysShowTabsChanged)
 DEFINE_BOOL_SETTER(setSettingsIconInNotch, m_settingsIconInNotch, "settingsIconInNotch", settingsIconInNotchChanged)
+DEFINE_BOOL_SETTER(setShowOnAllDisplays, m_showOnAllDisplays, "showOnAllDisplays", showOnAllDisplaysChanged)
 DEFINE_BOOL_SETTER(setColoredSpectrogram, m_coloredSpectrogram, "coloredSpectrogram", coloredSpectrogramChanged)
 DEFINE_BOOL_SETTER(setRealtimeAudioWaveform, m_realtimeAudioWaveform, "realtimeAudioWaveform", realtimeAudioWaveformChanged)
 DEFINE_BOOL_SETTER(setPlayerColorTinting, m_playerColorTinting, "playerColorTinting", playerColorTintingChanged)

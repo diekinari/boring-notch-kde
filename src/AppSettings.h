@@ -16,6 +16,7 @@ class AppSettings : public QObject {
     // --- General ---
     Q_PROPERTY(bool alwaysShowTabs READ alwaysShowTabs WRITE setAlwaysShowTabs NOTIFY alwaysShowTabsChanged)
     Q_PROPERTY(bool settingsIconInNotch READ settingsIconInNotch WRITE setSettingsIconInNotch NOTIFY settingsIconInNotchChanged)
+    Q_PROPERTY(bool showOnAllDisplays READ showOnAllDisplays WRITE setShowOnAllDisplays NOTIFY showOnAllDisplaysChanged)
     // --- Media ---
     Q_PROPERTY(bool coloredSpectrogram READ coloredSpectrogram WRITE setColoredSpectrogram NOTIFY coloredSpectrogramChanged)
     Q_PROPERTY(bool realtimeAudioWaveform READ realtimeAudioWaveform WRITE setRealtimeAudioWaveform NOTIFY realtimeAudioWaveformChanged)
@@ -32,6 +33,7 @@ public:
 
     bool alwaysShowTabs() const { return m_alwaysShowTabs; }
     bool settingsIconInNotch() const { return m_settingsIconInNotch; }
+    bool showOnAllDisplays() const { return m_showOnAllDisplays; }
     bool coloredSpectrogram() const { return m_coloredSpectrogram; }
     bool realtimeAudioWaveform() const { return m_realtimeAudioWaveform; }
     bool playerColorTinting() const { return m_playerColorTinting; }
@@ -42,6 +44,7 @@ public:
 
     void setAlwaysShowTabs(bool v);
     void setSettingsIconInNotch(bool v);
+    void setShowOnAllDisplays(bool v);
     void setColoredSpectrogram(bool v);
     void setRealtimeAudioWaveform(bool v);
     void setPlayerColorTinting(bool v);
@@ -53,6 +56,7 @@ public:
 Q_SIGNALS:
     void alwaysShowTabsChanged();
     void settingsIconInNotchChanged();
+    void showOnAllDisplaysChanged();
     void coloredSpectrogramChanged();
     void realtimeAudioWaveformChanged();
     void playerColorTintingChanged();
@@ -71,6 +75,7 @@ private:
 
     bool m_alwaysShowTabs = false;
     bool m_settingsIconInNotch = true;
+    bool m_showOnAllDisplays = true; // notch on every monitor by default
     bool m_coloredSpectrogram = true;
     bool m_realtimeAudioWaveform = false;
     bool m_playerColorTinting = true;
