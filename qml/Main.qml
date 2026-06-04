@@ -14,7 +14,10 @@ Window {
     readonly property int expandedWidth: 420
     readonly property int expandedHeight: 160
 
-    property bool expanded: hoverArea.containsMouse
+    // HoverHandler (not a MouseArea) so that hovering child controls doesn't
+    // steal the hover and collapse us: handlers report hover independently,
+    // so the root stays hovered while the cursor is anywhere inside the window.
+    property bool expanded: notchHover.hovered
 
     width: expanded ? expandedWidth : collapsedWidth
     height: expanded ? expandedHeight : collapsedHeight
@@ -35,10 +38,8 @@ Window {
         bottomLeftRadius: 18
         bottomRightRadius: 18
 
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: true
+        HoverHandler {
+            id: notchHover
         }
 
         // Collapsed content: tiny now-playing hint.

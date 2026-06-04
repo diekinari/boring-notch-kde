@@ -76,21 +76,27 @@ Item {
     }
 
     // Inline transport button to keep the file self-contained for the MVP.
-    component TransportButton: Text {
+    // Uses pointer handlers (not a MouseArea) so it doesn't steal hover from the
+    // root HoverHandler that keeps the notch expanded. The Item gives a generous
+    // square hit area around the small glyph.
+    component TransportButton: Item {
+        id: btn
         property string glyph
         property bool big: false
         signal clicked
-        text: glyph
-        color: tapArea.containsMouse ? "white" : "#cccccc"
-        font.pixelSize: big ? 26 : 20
+
+        implicitWidth: big ? 40 : 34
+        implicitHeight: big ? 40 : 34
         opacity: card.player ? 1.0 : 0.3
-        MouseArea {
-            id: tapArea
-            anchors.fill: parent
-            anchors.margins: -8
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: parent.clicked()
+
+        Text {
+            anchors.centerIn: parent
+            text: btn.glyph
+            color: hover.hovered ? "white" : "#cccccc"
+            font.pixelSize: btn.big ? 26 : 20
         }
+
+        HoverHandler { id: hover; cursorShape: Qt.PointingHandCursor }
+        TapHandler { onTapped: btn.clicked() }
     }
 }
