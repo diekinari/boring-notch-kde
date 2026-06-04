@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Git post-merge hook: after every successful `git pull`, rebuild and reinstall
+# so the installed app always matches the latest sources.
+#
+# Enable once with:
+#   git config core.hooksPath scripts/git-hooks
+set -euo pipefail
+
+repo="$(git rev-parse --show-toplevel)"
+cd "$repo"
+
+echo "[post-merge] rebuilding boring-notch-kde…"
+cmake -B build -DCMAKE_BUILD_TYPE=Release >/dev/null
+cmake --build build -j"$(nproc)"
+
+echo "[post-merge] installing…"
+if ! cmake --install build 2>/dev/null; then
+    sudo cmake --install build
+fi
+
+echo "[post-merge] done — restart Boring Notch to pick up the new build."

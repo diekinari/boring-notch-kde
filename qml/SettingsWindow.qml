@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -12,7 +13,38 @@ ApplicationWindow {
     height: 580
     minimumWidth: 420
     minimumHeight: 420
-    flags: Qt.Window
+    // Force a normal, windowed top-level (some Wayland setups otherwise map it
+    // oversized / without decorations).
+    visibility: Window.Windowed
+    flags: Qt.Dialog
+
+    // Close with Escape regardless of whether the compositor draws a titlebar.
+    Shortcut {
+        sequences: [StandardKey.Close, StandardKey.Cancel]
+        onActivated: win.close()
+    }
+
+    // Our own header bar, so there is always a visible close button even when
+    // the Wayland compositor provides no server-side decorations.
+    header: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 12
+            anchors.rightMargin: 6
+            Label {
+                text: qsTr("Settings")
+                font.bold: true
+                Layout.fillWidth: true
+            }
+            ToolButton {
+                text: "✕"
+                font.pixelSize: 16
+                onClicked: win.close()
+                ToolTip.visible: hovered
+                ToolTip.text: qsTr("Close")
+            }
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent

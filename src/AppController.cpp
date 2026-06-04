@@ -31,11 +31,8 @@ void AppController::setupTray() {
     m_tray->setToolTip(QStringLiteral("Boring Notch"));
     m_tray->setContextMenu(m_menu);
 
-    // Left-click also opens settings, matching common tray conventions.
-    connect(m_tray, &QSystemTrayIcon::activated, this,
-            [this](QSystemTrayIcon::ActivationReason reason) {
-                if (reason == QSystemTrayIcon::Trigger) requestSettings();
-            });
+    // Intentionally no left-click action: the right-click menu already offers
+    // Settings/Quit, and a single click shouldn't pop the settings window open.
 
     m_tray->show();
 }

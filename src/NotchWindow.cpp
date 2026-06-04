@@ -12,6 +12,12 @@ void NotchWindow::configureLayerShell(QQuickWindow *window) {
     // LayerShellQt::Window::get() attaches layer-shell role to the QWindow.
     auto *layer = LayerShellQt::Window::get(window);
 
+    // Place the surface on the output the QWindow was assigned to
+    // (QWindow::setScreen). Without this LayerShellQt lets the compositor pick
+    // the output, so every notch lands on the same (primary) screen and the
+    // external monitors get none.
+    layer->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
+
     // Top layer: above normal windows but below fullscreen-exclusive surfaces.
     layer->setLayer(LayerShellQt::Window::LayerTop);
 

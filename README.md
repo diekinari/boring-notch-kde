@@ -126,6 +126,23 @@ setsid -f ./build/boring-notch-kde   # runs in its own session; survives the ter
 
 Quit the app from its **tray icon → Quit**, or the notch's right-click menu.
 
+### Keeping it updated
+
+To pull the latest changes, rebuild, and reinstall in one step:
+
+```bash
+./scripts/update.sh
+```
+
+To do it **automatically after every `git pull`**, enable the bundled hook once:
+
+```bash
+git config core.hooksPath scripts/git-hooks
+```
+
+After that, `git pull` rebuilds and reinstalls on its own (it'll ask for `sudo`
+if you installed to a system prefix). Restart Boring Notch to run the new build.
+
 A PKGBUILD for the AUR lives in `packaging/` (WIP).
 
 ## Architecture
