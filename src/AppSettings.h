@@ -27,6 +27,13 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool showFaceAnimation READ showFaceAnimation WRITE setShowFaceAnimation NOTIFY showFaceAnimationChanged)
     // --- Claude Code ---
     Q_PROPERTY(bool claudeIndicatorEnabled READ claudeIndicatorEnabled WRITE setClaudeIndicatorEnabled NOTIFY claudeIndicatorEnabledChanged)
+    // --- Notch geometry (pixels) ---
+    Q_PROPERTY(int closedNotchWidth READ closedNotchWidth WRITE setClosedNotchWidth NOTIFY closedNotchWidthChanged)
+    Q_PROPERTY(int closedNotchHeight READ closedNotchHeight WRITE setClosedNotchHeight NOTIFY closedNotchHeightChanged)
+    Q_PROPERTY(int openNotchWidth READ openNotchWidth WRITE setOpenNotchWidth NOTIFY openNotchWidthChanged)
+    Q_PROPERTY(int openNotchHeight READ openNotchHeight WRITE setOpenNotchHeight NOTIFY openNotchHeightChanged)
+    Q_PROPERTY(int closedCornerRadius READ closedCornerRadius WRITE setClosedCornerRadius NOTIFY closedCornerRadiusChanged)
+    Q_PROPERTY(int openCornerRadius READ openCornerRadius WRITE setOpenCornerRadius NOTIFY openCornerRadiusChanged)
 
 public:
     explicit AppSettings(QObject *parent = nullptr);
@@ -41,6 +48,12 @@ public:
     QString sliderColor() const { return m_sliderColor; }
     bool showFaceAnimation() const { return m_showFaceAnimation; }
     bool claudeIndicatorEnabled() const { return m_claudeIndicatorEnabled; }
+    int closedNotchWidth() const { return m_closedNotchWidth; }
+    int closedNotchHeight() const { return m_closedNotchHeight; }
+    int openNotchWidth() const { return m_openNotchWidth; }
+    int openNotchHeight() const { return m_openNotchHeight; }
+    int closedCornerRadius() const { return m_closedCornerRadius; }
+    int openCornerRadius() const { return m_openCornerRadius; }
 
     void setAlwaysShowTabs(bool v);
     void setSettingsIconInNotch(bool v);
@@ -52,6 +65,12 @@ public:
     void setSliderColor(const QString &v);
     void setShowFaceAnimation(bool v);
     void setClaudeIndicatorEnabled(bool v);
+    void setClosedNotchWidth(int v);
+    void setClosedNotchHeight(int v);
+    void setOpenNotchWidth(int v);
+    void setOpenNotchHeight(int v);
+    void setClosedCornerRadius(int v);
+    void setOpenCornerRadius(int v);
 
 Q_SIGNALS:
     void alwaysShowTabsChanged();
@@ -64,6 +83,12 @@ Q_SIGNALS:
     void sliderColorChanged();
     void showFaceAnimationChanged();
     void claudeIndicatorEnabledChanged();
+    void closedNotchWidthChanged();
+    void closedNotchHeightChanged();
+    void openNotchWidthChanged();
+    void openNotchHeightChanged();
+    void closedCornerRadiusChanged();
+    void openCornerRadiusChanged();
 
 private:
     template <class T>
@@ -83,4 +108,12 @@ private:
     QString m_sliderColor = QStringLiteral("Accent");
     bool m_showFaceAnimation = false;
     bool m_claudeIndicatorEnabled = false;
+
+    // Defaults mirror the macOS original (see Notch.qml comments).
+    int m_closedNotchWidth = 185;
+    int m_closedNotchHeight = 32;
+    int m_openNotchWidth = 640;
+    int m_openNotchHeight = 190;
+    int m_closedCornerRadius = 14;
+    int m_openCornerRadius = 24;
 };

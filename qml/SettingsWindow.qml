@@ -10,40 +10,18 @@ ApplicationWindow {
     id: win
     title: qsTr("Boring Notch — Settings")
     width: 520
-    height: 580
+    height: 600
     minimumWidth: 420
     minimumHeight: 420
-    // Force a normal, windowed top-level (some Wayland setups otherwise map it
-    // oversized / without decorations).
-    visibility: Window.Windowed
+    // NOTE: do not set `visibility` here — any non-Hidden value would force the
+    // window visible at startup. It stays hidden until NotchManager shows it.
     flags: Qt.Dialog
 
-    // Close with Escape regardless of whether the compositor draws a titlebar.
+    // Close with Escape (the compositor already provides the window's close
+    // button / titlebar).
     Shortcut {
         sequences: [StandardKey.Close, StandardKey.Cancel]
         onActivated: win.close()
-    }
-
-    // Our own header bar, so there is always a visible close button even when
-    // the Wayland compositor provides no server-side decorations.
-    header: ToolBar {
-        RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: 12
-            anchors.rightMargin: 6
-            Label {
-                text: qsTr("Settings")
-                font.bold: true
-                Layout.fillWidth: true
-            }
-            ToolButton {
-                text: "✕"
-                font.pixelSize: 16
-                onClicked: win.close()
-                ToolTip.visible: hovered
-                ToolTip.text: qsTr("Close")
-            }
-        }
     }
 
     ColumnLayout {
@@ -54,6 +32,7 @@ ApplicationWindow {
             id: tabs
             Layout.fillWidth: true
             TabButton { text: qsTr("Appearance") }
+            TabButton { text: qsTr("Notch") }
         }
 
         StackLayout {
@@ -150,6 +129,59 @@ ApplicationWindow {
                     Item { Layout.fillHeight: true; Layout.preferredHeight: 18 }
                 }
             }
+
+            // --- Notch (size & shape) page --------------------------------
+            ScrollView {
+                id: notchScroll
+                clip: true
+                contentWidth: availableWidth
+
+                ColumnLayout {
+                    width: notchScroll.availableWidth
+                    spacing: 18
+
+                    SettingsGroup {
+                        title: qsTr("Closed (collapsed) notch")
+                        Layout.topMargin: 18
+                        SpinRow {
+                            label: qsTr("Width"); from: 80; to: 1200
+                            value: Config.closedNotchWidth
+                            onEdited: newValue => Config.closedNotchWidth = newValue
+                        }
+                        SpinRow {
+                            label: qsTr("Height"); from: 12; to: 200
+                            value: Config.closedNotchHeight
+                            onEdited: newValue => Config.closedNotchHeight = newValue
+                        }
+                        SpinRow {
+                            label: qsTr("Corner radius"); from: 0; to: 60
+                            value: Config.closedCornerRadius
+                            onEdited: newValue => Config.closedCornerRadius = newValue
+                        }
+                    }
+
+                    SettingsGroup {
+                        title: qsTr("Open (expanded) notch")
+                        SpinRow {
+                            label: qsTr("Width"); from: 200; to: 1600
+                            value: Config.openNotchWidth
+                            onEdited: newValue => Config.openNotchWidth = newValue
+                        }
+                        SpinRow {
+                            label: qsTr("Height"); from: 60; to: 800
+                            value: Config.openNotchHeight
+                            onEdited: newValue => Config.openNotchHeight = newValue
+                        }
+                        SpinRow {
+                            label: qsTr("Corner radius"); from: 0; to: 80
+                            value: Config.openCornerRadius
+                            onEdited: newValue => Config.openCornerRadius = newValue
+                        }
+                    }
+
+                    Item { Layout.fillHeight: true; Layout.preferredHeight: 18 }
+                }
+            }
         }
     }
 
@@ -203,6 +235,34 @@ ApplicationWindow {
                 const v = checked;
                 checked = Qt.binding(function () { return row.checked; });
                 row.toggled(v);
+            }
+        }
+    }
+
+    // A label + integer SpinBox. Same two-way-safe pattern as ToggleRow.
+    component SpinRow: RowLayout {
+        id: srow
+        property string label
+        property int from: 0
+        property int to: 2000
+        property int step: 1
+        property int value: 0
+        signal edited(int newValue)
+
+        Layout.fillWidth: true
+        spacing: 12
+
+        Label { text: srow.label; Layout.fillWidth: true }
+        SpinBox {
+            from: srow.from
+            to: srow.to
+            stepSize: srow.step
+            editable: true
+            value: srow.value
+            onValueModified: {
+                const v = value;
+                value = Qt.binding(function () { return srow.value; });
+                srow.edited(v);
             }
         }
     }

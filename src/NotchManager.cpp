@@ -68,11 +68,19 @@ QQuickWindow *NotchManager::createNotch(QScreen *screen) {
     win->setScreen(screen);
     NotchWindow::configureLayerShell(win);
     win->setVisible(true);
+    qInfo() << "[notch] created notch on screen" << screen->name()
+            << "-> window now on" << (win->screen() ? win->screen()->name() : "<null>");
     return win;
 }
 
 void NotchManager::rebuildNotches() {
     const QList<QScreen *> targets = targetScreens();
+
+    qInfo() << "[notch] rebuild:" << qApp->screens().size()
+            << "screen(s) total," << targets.size() << "target(s);"
+            << "showOnAllDisplays =" << m_settings->showOnAllDisplays();
+    for (QScreen *s : targets)
+        qInfo() << "[notch]   target screen:" << s->name() << s->geometry();
 
     // Drop notches whose screen is gone or no longer targeted.
     const auto current = m_notches.keys();

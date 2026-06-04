@@ -16,6 +16,12 @@ AppSettings::AppSettings(QObject *parent)
     m_sliderColor = m_store.value(QStringLiteral("sliderColor"), m_sliderColor).toString();
     m_showFaceAnimation = m_store.value(QStringLiteral("showFaceAnimation"), m_showFaceAnimation).toBool();
     m_claudeIndicatorEnabled = m_store.value(QStringLiteral("claudeIndicatorEnabled"), m_claudeIndicatorEnabled).toBool();
+    m_closedNotchWidth = m_store.value(QStringLiteral("closedNotchWidth"), m_closedNotchWidth).toInt();
+    m_closedNotchHeight = m_store.value(QStringLiteral("closedNotchHeight"), m_closedNotchHeight).toInt();
+    m_openNotchWidth = m_store.value(QStringLiteral("openNotchWidth"), m_openNotchWidth).toInt();
+    m_openNotchHeight = m_store.value(QStringLiteral("openNotchHeight"), m_openNotchHeight).toInt();
+    m_closedCornerRadius = m_store.value(QStringLiteral("closedCornerRadius"), m_closedCornerRadius).toInt();
+    m_openCornerRadius = m_store.value(QStringLiteral("openCornerRadius"), m_openCornerRadius).toInt();
 }
 
 // Each setter is a no-op when the value is unchanged; otherwise it updates the
@@ -39,6 +45,23 @@ DEFINE_BOOL_SETTER(setShowFaceAnimation, m_showFaceAnimation, "showFaceAnimation
 DEFINE_BOOL_SETTER(setClaudeIndicatorEnabled, m_claudeIndicatorEnabled, "claudeIndicatorEnabled", claudeIndicatorEnabledChanged)
 
 #undef DEFINE_BOOL_SETTER
+
+#define DEFINE_INT_SETTER(Setter, Member, Key, Signal)        \
+    void AppSettings::Setter(int v) {                         \
+        if (Member == v) return;                              \
+        Member = v;                                           \
+        store(Key, v);                                        \
+        Q_EMIT Signal();                                      \
+    }
+
+DEFINE_INT_SETTER(setClosedNotchWidth, m_closedNotchWidth, "closedNotchWidth", closedNotchWidthChanged)
+DEFINE_INT_SETTER(setClosedNotchHeight, m_closedNotchHeight, "closedNotchHeight", closedNotchHeightChanged)
+DEFINE_INT_SETTER(setOpenNotchWidth, m_openNotchWidth, "openNotchWidth", openNotchWidthChanged)
+DEFINE_INT_SETTER(setOpenNotchHeight, m_openNotchHeight, "openNotchHeight", openNotchHeightChanged)
+DEFINE_INT_SETTER(setClosedCornerRadius, m_closedCornerRadius, "closedCornerRadius", closedCornerRadiusChanged)
+DEFINE_INT_SETTER(setOpenCornerRadius, m_openCornerRadius, "openCornerRadius", openCornerRadiusChanged)
+
+#undef DEFINE_INT_SETTER
 
 void AppSettings::setSliderColor(const QString &v) {
     if (m_sliderColor == v) return;

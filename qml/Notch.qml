@@ -11,12 +11,12 @@ import "components"
 Window {
     id: root
 
-    // Dimensions mirror the macOS original (boring.notch sizing/matters.swift):
-    // a real MacBook notch is ~185 wide x 32 tall; the open panel is 640 x 190.
-    readonly property int collapsedWidth: 185
-    readonly property int collapsedHeight: 32
-    readonly property int expandedWidth: 640
-    readonly property int expandedHeight: 190
+    // Dimensions come from settings (defaults mirror the macOS original:
+    // a real MacBook notch is ~185 wide x 32 tall; open panel 640 x 190).
+    readonly property int collapsedWidth: Config.closedNotchWidth
+    readonly property int collapsedHeight: Config.closedNotchHeight
+    readonly property int expandedWidth: Config.openNotchWidth
+    readonly property int expandedHeight: Config.openNotchHeight
 
     // HoverHandler (not a MouseArea) so that hovering child controls doesn't
     // steal the hover and collapse us: handlers report hover independently,
@@ -40,8 +40,8 @@ Window {
         // Bottom radius matches the macOS original: 14 closed, 24 open.
         topLeftRadius: 0
         topRightRadius: 0
-        bottomLeftRadius: root.expanded ? 24 : 14
-        bottomRightRadius: root.expanded ? 24 : 14
+        bottomLeftRadius: root.expanded ? Config.openCornerRadius : Config.closedCornerRadius
+        bottomRightRadius: root.expanded ? Config.openCornerRadius : Config.closedCornerRadius
         Behavior on bottomLeftRadius  { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Behavior on bottomRightRadius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
