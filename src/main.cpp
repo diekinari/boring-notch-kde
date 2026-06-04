@@ -2,8 +2,6 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 
-#include <LayerShellQt/Shell>
-
 #include "AppController.h"
 #include "AppSettings.h"
 #include "MprisManager.h"
@@ -11,9 +9,9 @@
 #include "NotchManager.h"
 
 int main(int argc, char *argv[]) {
-    // Must be called before the application so Qt's Wayland plugin loads the
-    // layer-shell integration.
-    LayerShellQt::Shell::useLayerShell();
+    // Note: LayerShellQt::Shell::useLayerShell() is intentionally not called —
+    // it's a no-op (and deprecated) since Qt 6.5, which is our minimum. The
+    // layer-shell integration is applied per-window in NotchWindow.
 
     // QApplication (not QGuiApplication) because the system-tray icon and its
     // context menu live in QtWidgets.
