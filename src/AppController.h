@@ -1,0 +1,30 @@
+#pragma once
+
+#include <QObject>
+
+class QSystemTrayIcon;
+class QMenu;
+
+// Owns the system-tray icon (the Linux equivalent of the macOS menu-bar extra)
+// and brokers "open settings" / "quit" requests. Exposed to QML as `App`.
+//
+// Both the tray menu and a right-click on the notch call requestSettings(),
+// which emits settingsRequested(); the QML side shows the settings window.
+class AppController : public QObject {
+    Q_OBJECT
+public:
+    explicit AppController(QObject *parent = nullptr);
+
+    // Creates the tray icon + context menu. Call once after the app is set up.
+    void setupTray();
+
+    Q_INVOKABLE void requestSettings() { Q_EMIT settingsRequested(); }
+    Q_INVOKABLE void quit();
+
+Q_SIGNALS:
+    void settingsRequested();
+
+private:
+    QSystemTrayIcon *m_tray = nullptr;
+    QMenu *m_menu = nullptr;
+};

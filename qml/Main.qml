@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Window
+import QtQuick.Controls
 import BoringNotch
 import "components"
 
@@ -47,6 +48,33 @@ Window {
             id: notchHover
         }
 
+        // Right-click anywhere on the notch -> context menu (like macOS).
+        TapHandler {
+            acceptedButtons: Qt.RightButton
+            onTapped: contextMenu.popup()
+        }
+
+        Menu {
+            id: contextMenu
+            MenuItem { text: qsTr("Settings…"); onTriggered: App.requestSettings() }
+            MenuSeparator {}
+            MenuItem { text: qsTr("Quit"); onTriggered: App.quit() }
+        }
+
+        // Settings gear, shown in the expanded notch when enabled.
+        Text {
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: 8
+            anchors.rightMargin: 12
+            visible: root.expanded && Config.settingsIconInNotch
+            text: "⚙"
+            font.pixelSize: 16
+            color: gearHover.hovered ? "white" : "#888888"
+            HoverHandler { id: gearHover; cursorShape: Qt.PointingHandCursor }
+            TapHandler { onTapped: App.requestSettings() }
+        }
+
         // Collapsed content: tiny now-playing hint.
         Row {
             anchors.centerIn: parent
@@ -80,6 +108,22 @@ Window {
             visible: root.expanded
             opacity: visible ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 200 } }
+        }
+    }
+
+    // Standalone settings window. Hidden until requested from the tray icon or
+    // the notch's context menu / gear.
+    SettingsWindow {
+        id: settingsWindow
+        visible: false
+    }
+
+    Connections {
+        target: App
+        function onSettingsRequested() {
+            settingsWindow.show();
+            settingsWindow.raise();
+            settingsWindow.requestActivate();
         }
     }
 }

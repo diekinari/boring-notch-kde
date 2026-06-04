@@ -12,9 +12,14 @@ and more.
 > - Top-edge layer-shell overlay (Wayland) that expands on hover
 > - Media controls via **MPRIS** over D-Bus (works with Spotify, browsers, VLC,
 >   any MPRIS2 player) — play/pause, next/prev, title/artist/album art
+> - **System-tray icon** + right-click context menu on the notch
+> - **Settings window** with an Appearance page mirroring the macOS original,
+>   persisted via QSettings (`~/.config/TheBoringTeam/boring-notch-kde.conf`).
+>   Toggles for not-yet-built features (visualizer, tabs, face, Claude) are saved
+>   and will activate once those features land.
 >
 > Not yet ported: audio visualizer, battery, calendar, webcam, file shelf, OSD,
-> settings UI, global shortcuts, X11 fallback. See [Roadmap](#roadmap).
+> global shortcuts, X11 fallback. See [Roadmap](#roadmap).
 
 This is **not** a port of the Swift source — SwiftUI/AppKit don't exist on Linux.
 It's a ground-up rewrite in **Qt6/QML + KDE Frameworks**, reusing the macOS app's

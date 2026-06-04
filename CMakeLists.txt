@@ -9,7 +9,8 @@ set(CMAKE_AUTOMOC ON)
 # --- Dependencies -----------------------------------------------------------
 # Qt6: Quick/Qml for the UI, DBus for MPRIS/UPower, Multimedia later for the
 # audio visualizer & webcam.
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 DBus)
+# Widgets is pulled in for the system-tray icon (QSystemTrayIcon / QMenu).
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2 DBus)
 
 # LayerShellQt: lets us anchor the overlay to the top edge of the screen on
 # Wayland (wlr-layer-shell). Ships with KDE / Plasma.
@@ -27,6 +28,10 @@ qt_add_executable(boring-notch-kde
     src/MprisManager.h
     src/MprisPlayer.cpp
     src/MprisPlayer.h
+    src/AppSettings.cpp
+    src/AppSettings.h
+    src/AppController.cpp
+    src/AppController.h
 )
 
 qt_add_qml_module(boring-notch-kde
@@ -34,6 +39,7 @@ qt_add_qml_module(boring-notch-kde
     VERSION 1.0
     QML_FILES
         qml/Main.qml
+        qml/SettingsWindow.qml
         qml/components/MusicView.qml
         qml/components/MarqueeText.qml
 )
@@ -41,6 +47,7 @@ qt_add_qml_module(boring-notch-kde
 target_link_libraries(boring-notch-kde PRIVATE
     Qt6::Core
     Qt6::Gui
+    Qt6::Widgets
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickControls2
