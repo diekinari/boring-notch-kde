@@ -23,6 +23,9 @@ public:
     Q_INVOKABLE void requestSettings() { Q_EMIT settingsRequested(); }
     Q_INVOKABLE void quit();
 
+    // Open KWin's Desktop Effects settings (where the global Blur strength is).
+    Q_INVOKABLE void openBlurSettings();
+
 Q_SIGNALS:
     void settingsRequested();
 

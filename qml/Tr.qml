@@ -62,6 +62,9 @@ QtObject {
         "Opacity (%)": { ru: "Непрозрачность (%)" },
         "Sheen (%)": { ru: "Блик (%)" },
         "Rim highlight (%)": { ru: "Светящаяся кромка (%)" },
+        "Frost strength (%)": { ru: "Сила матовости (%)" },
+        "Blur radius is a global KWin setting and can't be set per-window; frost adjusts the background contrast/intensity instead.": { ru: "Радиус размытия — глобальная настройка KWin, его нельзя задать для отдельного окна; «матовость» меняет контраст/яркость фона." },
+        "Open KWin blur settings…": { ru: "Открыть настройки блюра KWin…" },
         // Music
         "Nothing playing": { ru: "Ничего не играет" },
         "No player": { ru: "Нет плеера" }

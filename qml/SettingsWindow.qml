@@ -219,6 +219,18 @@ ApplicationWindow {
                             onToggled: value => Config.glassBlur = value
                         }
                         SpinRow {
+                            label: Tr.t("Frost strength (%)"); from: 0; to: 100
+                            value: Config.glassFrost
+                            onEdited: newValue => Config.glassFrost = newValue
+                        }
+                        Label {
+                            Layout.fillWidth: true
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: 11
+                            opacity: 0.55
+                            text: Tr.t("Blur radius is a global KWin setting and can't be set per-window; frost adjusts the background contrast/intensity instead.")
+                        }
+                        SpinRow {
                             label: Tr.t("Opacity (%)"); from: 0; to: 100
                             value: Config.glassOpacity
                             onEdited: newValue => Config.glassOpacity = newValue
@@ -233,6 +245,17 @@ ApplicationWindow {
                             value: Config.glassRim
                             onEdited: newValue => Config.glassRim = newValue
                         }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 18
+                        Layout.rightMargin: 18
+                        Button {
+                            text: Tr.t("Open KWin blur settings…")
+                            onClicked: App.openBlurSettings()
+                        }
+                        Item { Layout.fillWidth: true }
                     }
 
                     ResetRow { onReset: Config.resetGlass() }

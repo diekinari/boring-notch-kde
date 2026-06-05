@@ -45,3 +45,10 @@ void NotchWindow::setGlass(QQuickWindow *window, bool enabled) {
     // it simply does nothing if the compositor doesn't support blur.
     KWindowEffects::enableBlurBehind(window, enabled);
 }
+
+void NotchWindow::setFrost(QQuickWindow *window, bool enabled, qreal contrast,
+                           qreal intensity, qreal saturation) {
+    if (!window) return;
+    KWindowEffects::enableBackgroundContrast(window, enabled, contrast, intensity,
+                                             saturation);
+}

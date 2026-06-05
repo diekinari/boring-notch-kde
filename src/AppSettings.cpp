@@ -21,6 +21,7 @@ AppSettings::AppSettings(QObject *parent)
     m_glassOpacity = m_store.value(QStringLiteral("glassOpacity"), m_glassOpacity).toInt();
     m_glassSheen = m_store.value(QStringLiteral("glassSheen"), m_glassSheen).toInt();
     m_glassRim = m_store.value(QStringLiteral("glassRim"), m_glassRim).toInt();
+    m_glassFrost = m_store.value(QStringLiteral("glassFrost"), m_glassFrost).toInt();
     m_language = m_store.value(QStringLiteral("language"), m_language).toString();
     m_closedNotchWidth = m_store.value(QStringLiteral("closedNotchWidth"), m_closedNotchWidth).toInt();
     m_closedNotchHeight = m_store.value(QStringLiteral("closedNotchHeight"), m_closedNotchHeight).toInt();
@@ -65,6 +66,7 @@ DEFINE_BOOL_SETTER(setGlassBlur, m_glassBlur, "glassBlur", glassBlurChanged)
 DEFINE_INT_SETTER(setGlassOpacity, m_glassOpacity, "glassOpacity", glassOpacityChanged)
 DEFINE_INT_SETTER(setGlassSheen, m_glassSheen, "glassSheen", glassSheenChanged)
 DEFINE_INT_SETTER(setGlassRim, m_glassRim, "glassRim", glassRimChanged)
+DEFINE_INT_SETTER(setGlassFrost, m_glassFrost, "glassFrost", glassFrostChanged)
 DEFINE_INT_SETTER(setClosedNotchWidth, m_closedNotchWidth, "closedNotchWidth", closedNotchWidthChanged)
 DEFINE_INT_SETTER(setClosedNotchHeight, m_closedNotchHeight, "closedNotchHeight", closedNotchHeightChanged)
 DEFINE_INT_SETTER(setOpenNotchWidth, m_openNotchWidth, "openNotchWidth", openNotchWidthChanged)
@@ -102,5 +104,6 @@ void AppSettings::resetGlass() {
     setGlassOpacity(kDefGlassOpacity);
     setGlassSheen(kDefGlassSheen);
     setGlassRim(kDefGlassRim);
+    setGlassFrost(kDefGlassFrost);
     setGlassBlur(true);
 }

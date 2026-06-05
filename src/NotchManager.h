@@ -37,6 +37,7 @@ private Q_SLOTS:
 private:
     QList<QScreen *> targetScreens() const;
     QQuickWindow *createNotch(QScreen *screen);
+    void applyGlassTo(QQuickWindow *win);
 
     QQmlEngine *m_engine = nullptr;
     AppSettings *m_settings = nullptr;

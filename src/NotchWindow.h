@@ -23,4 +23,10 @@ public:
     // Ask KWin to blur the desktop behind the (translucent) window — the
     // "frosted glass" part of the liquid-glass look. No-op off KDE/KWin.
     static void setGlass(QQuickWindow *window, bool enabled);
+
+    // KWin background-contrast behind the window. The blur radius itself is a
+    // global KWin setting and can't be set per-window, but contrast/intensity/
+    // saturation can — this is our adjustable "frost strength". No-op off KWin.
+    static void setFrost(QQuickWindow *window, bool enabled, qreal contrast,
+                         qreal intensity, qreal saturation);
 };

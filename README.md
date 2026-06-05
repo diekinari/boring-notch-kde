@@ -20,7 +20,8 @@ and more.
 >   live when monitors are plugged/unplugged
 > - **System-tray icon** + right-click context menu on the notch
 > - Optional **liquid glass** look: translucent frosted notch (KWin blur) with a
->   glassy sheen and a bright rim; blur/opacity/sheen/rim configurable, resettable
+>   glassy sheen and a bright rim; blur/frost/opacity/sheen/rim configurable,
+>   resettable (blur radius itself is a global KWin setting, linked from settings)
 > - **Language switch** in settings (English / Русский), applied live
 > - **Settings window** with an Appearance page mirroring the macOS original,
 >   persisted via QSettings (`~/.config/TheBoringTeam/boring-notch-kde.conf`).

@@ -33,6 +33,7 @@ class AppSettings : public QObject {
     Q_PROPERTY(int glassOpacity READ glassOpacity WRITE setGlassOpacity NOTIFY glassOpacityChanged)
     Q_PROPERTY(int glassSheen READ glassSheen WRITE setGlassSheen NOTIFY glassSheenChanged)
     Q_PROPERTY(int glassRim READ glassRim WRITE setGlassRim NOTIFY glassRimChanged)
+    Q_PROPERTY(int glassFrost READ glassFrost WRITE setGlassFrost NOTIFY glassFrostChanged)
     // --- Language: "en" or "ru" ---
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
     // --- Notch geometry (pixels) ---
@@ -61,6 +62,7 @@ public:
     int glassOpacity() const { return m_glassOpacity; }
     int glassSheen() const { return m_glassSheen; }
     int glassRim() const { return m_glassRim; }
+    int glassFrost() const { return m_glassFrost; }
     QString language() const { return m_language; }
     int closedNotchWidth() const { return m_closedNotchWidth; }
     int closedNotchHeight() const { return m_closedNotchHeight; }
@@ -84,6 +86,7 @@ public:
     void setGlassOpacity(int v);
     void setGlassSheen(int v);
     void setGlassRim(int v);
+    void setGlassFrost(int v);
     void setLanguage(const QString &v);
 
     // Restore the liquid-glass parameters to the built-in defaults.
@@ -114,6 +117,7 @@ Q_SIGNALS:
     void glassOpacityChanged();
     void glassSheenChanged();
     void glassRimChanged();
+    void glassFrostChanged();
     void languageChanged();
     void closedNotchWidthChanged();
     void closedNotchHeightChanged();
@@ -145,9 +149,11 @@ private:
     static constexpr int kDefGlassOpacity = 55;
     static constexpr int kDefGlassSheen = 12;
     static constexpr int kDefGlassRim = 20;
+    static constexpr int kDefGlassFrost = 0;
     int m_glassOpacity = kDefGlassOpacity; // percent: fill alpha
     int m_glassSheen = kDefGlassSheen;     // percent: top highlight
     int m_glassRim = kDefGlassRim;         // percent: edge highlight
+    int m_glassFrost = kDefGlassFrost;     // percent: KWin background-contrast strength
     QString m_language = QStringLiteral("en");
 
     // Defaults mirror the macOS original (see Notch.qml comments).

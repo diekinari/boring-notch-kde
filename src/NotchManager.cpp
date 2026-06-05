@@ -37,19 +37,32 @@ void NotchManager::start() {
     // ...and when the user toggles "show on all displays".
     connect(m_settings, &AppSettings::showOnAllDisplaysChanged, this,
             &NotchManager::rebuildNotches);
-    // Re-apply blur-behind when the glass or blur option toggles.
+    // Re-apply blur / frost when any of the glass options change.
     connect(m_settings, &AppSettings::liquidGlassChanged, this,
             &NotchManager::applyGlass);
     connect(m_settings, &AppSettings::glassBlurChanged, this,
+            &NotchManager::applyGlass);
+    connect(m_settings, &AppSettings::glassFrostChanged, this,
             &NotchManager::applyGlass);
 
     rebuildNotches();
 }
 
 void NotchManager::applyGlass() {
-    const bool blur = m_settings->liquidGlass() && m_settings->glassBlur();
-    for (QQuickWindow *win : std::as_const(m_notches))
-        NotchWindow::setGlass(win, blur);
+    for (QQuickWindow *win : std::as_const(m_notches)) applyGlassTo(win);
+}
+
+void NotchManager::applyGlassTo(QQuickWindow *win) {
+    const bool glass = m_settings->liquidGlass();
+    NotchWindow::setGlass(win, glass && m_settings->glassBlur());
+
+    // Map the 0..100 "frost" strength onto KWin background-contrast params:
+    // darker and more desaturated as it grows. 0 disables the effect.
+    const qreal frost = glass ? m_settings->glassFrost() / 100.0 : 0.0;
+    NotchWindow::setFrost(win, frost > 0.0,
+                          /*contrast*/ 1.0,
+                          /*intensity*/ 1.0 - 0.4 * frost,
+                          /*saturation*/ 1.0 - 0.6 * frost);
 }
 
 QList<QScreen *> NotchManager::targetScreens() const {
@@ -78,7 +91,7 @@ QQuickWindow *NotchManager::createNotch(QScreen *screen) {
     // before the window is shown.
     win->setScreen(screen);
     NotchWindow::configureLayerShell(win, screen);
-    NotchWindow::setGlass(win, m_settings->liquidGlass() && m_settings->glassBlur());
+    applyGlassTo(win);
     win->setVisible(true);
     qInfo() << "[notch] created notch on screen" << screen->name()
             << "-> window now on" << (win->screen() ? win->screen()->name() : "<null>");

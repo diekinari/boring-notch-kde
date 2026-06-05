@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QIcon>
 #include <QMenu>
+#include <QProcess>
 #include <QSystemTrayIcon>
 
 AppController::AppController(AppSettings *settings, QObject *parent)
@@ -46,6 +47,16 @@ void AppController::setupTray() {
 
 void AppController::quit() {
     qApp->quit();
+}
+
+void AppController::openBlurSettings() {
+    // The KWin Blur effect (with its global strength slider) lives in the
+    // Desktop Effects KCM. Try kcmshell6, then fall back to systemsettings.
+    if (QProcess::startDetached(QStringLiteral("kcmshell6"),
+                                {QStringLiteral("kcm_kwin_effects")}))
+        return;
+    QProcess::startDetached(QStringLiteral("systemsettings"),
+                            {QStringLiteral("kcm_kwin_effects")});
 }
 
 void AppController::retranslate() {
