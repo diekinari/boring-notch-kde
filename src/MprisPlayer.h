@@ -41,6 +41,11 @@ public:
     // position-changed signal beyond the rarely-emitted Seeked).
     Q_INVOKABLE qlonglong position() const;
 
+    // Monotonic "last became active/playing" stamp, set by MprisManager and used
+    // to break ties when picking which player to show.
+    quint64 activitySeq() const { return m_activitySeq; }
+    void setActivitySeq(quint64 seq) { m_activitySeq = seq; }
+
 public Q_SLOTS:
     void playPause();
     void next();
@@ -69,6 +74,7 @@ private:
     qlonglong m_length = 0;
     QString m_trackId; // mpris:trackid, needed for SetPosition
     QString m_playbackStatus = QStringLiteral("Stopped");
+    quint64 m_activitySeq = 0;
 
     QDBusInterface *m_player = nullptr; // org.mpris.MediaPlayer2.Player
     QDBusInterface *m_root = nullptr;   // org.mpris.MediaPlayer2 (Identity)

@@ -29,6 +29,9 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool claudeIndicatorEnabled READ claudeIndicatorEnabled WRITE setClaudeIndicatorEnabled NOTIFY claudeIndicatorEnabledChanged)
     // --- Glass ---
     Q_PROPERTY(bool liquidGlass READ liquidGlass WRITE setLiquidGlass NOTIFY liquidGlassChanged)
+    Q_PROPERTY(int glassOpacity READ glassOpacity WRITE setGlassOpacity NOTIFY glassOpacityChanged)
+    Q_PROPERTY(int glassSheen READ glassSheen WRITE setGlassSheen NOTIFY glassSheenChanged)
+    Q_PROPERTY(int glassRim READ glassRim WRITE setGlassRim NOTIFY glassRimChanged)
     // --- Notch geometry (pixels) ---
     Q_PROPERTY(int closedNotchWidth READ closedNotchWidth WRITE setClosedNotchWidth NOTIFY closedNotchWidthChanged)
     Q_PROPERTY(int closedNotchHeight READ closedNotchHeight WRITE setClosedNotchHeight NOTIFY closedNotchHeightChanged)
@@ -51,6 +54,9 @@ public:
     bool showFaceAnimation() const { return m_showFaceAnimation; }
     bool claudeIndicatorEnabled() const { return m_claudeIndicatorEnabled; }
     bool liquidGlass() const { return m_liquidGlass; }
+    int glassOpacity() const { return m_glassOpacity; }
+    int glassSheen() const { return m_glassSheen; }
+    int glassRim() const { return m_glassRim; }
     int closedNotchWidth() const { return m_closedNotchWidth; }
     int closedNotchHeight() const { return m_closedNotchHeight; }
     int openNotchWidth() const { return m_openNotchWidth; }
@@ -69,6 +75,9 @@ public:
     void setShowFaceAnimation(bool v);
     void setClaudeIndicatorEnabled(bool v);
     void setLiquidGlass(bool v);
+    void setGlassOpacity(int v);
+    void setGlassSheen(int v);
+    void setGlassRim(int v);
     void setClosedNotchWidth(int v);
     void setClosedNotchHeight(int v);
     void setOpenNotchWidth(int v);
@@ -91,6 +100,9 @@ Q_SIGNALS:
     void showFaceAnimationChanged();
     void claudeIndicatorEnabledChanged();
     void liquidGlassChanged();
+    void glassOpacityChanged();
+    void glassSheenChanged();
+    void glassRimChanged();
     void closedNotchWidthChanged();
     void closedNotchHeightChanged();
     void openNotchWidthChanged();
@@ -117,6 +129,9 @@ private:
     bool m_showFaceAnimation = false;
     bool m_claudeIndicatorEnabled = false;
     bool m_liquidGlass = false;
+    int m_glassOpacity = 55; // percent: fill alpha
+    int m_glassSheen = 12;   // percent: top highlight
+    int m_glassRim = 20;     // percent: edge highlight
 
     // Defaults mirror the macOS original (see Notch.qml comments).
     static constexpr int kDefClosedW = 185;

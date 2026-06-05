@@ -49,5 +49,6 @@ private:
 
     QHash<QString, MprisPlayer *> m_players; // service name -> player
     MprisPlayer *m_active = nullptr;
-    QString m_manualService; // user-pinned player, empty = automatic
+    QString m_manualService;  // user-pinned player, empty = automatic
+    quint64 m_seq = 0;        // monotonic activity counter for recency
 };

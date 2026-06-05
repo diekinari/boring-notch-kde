@@ -17,6 +17,9 @@ AppSettings::AppSettings(QObject *parent)
     m_showFaceAnimation = m_store.value(QStringLiteral("showFaceAnimation"), m_showFaceAnimation).toBool();
     m_claudeIndicatorEnabled = m_store.value(QStringLiteral("claudeIndicatorEnabled"), m_claudeIndicatorEnabled).toBool();
     m_liquidGlass = m_store.value(QStringLiteral("liquidGlass"), m_liquidGlass).toBool();
+    m_glassOpacity = m_store.value(QStringLiteral("glassOpacity"), m_glassOpacity).toInt();
+    m_glassSheen = m_store.value(QStringLiteral("glassSheen"), m_glassSheen).toInt();
+    m_glassRim = m_store.value(QStringLiteral("glassRim"), m_glassRim).toInt();
     m_closedNotchWidth = m_store.value(QStringLiteral("closedNotchWidth"), m_closedNotchWidth).toInt();
     m_closedNotchHeight = m_store.value(QStringLiteral("closedNotchHeight"), m_closedNotchHeight).toInt();
     m_openNotchWidth = m_store.value(QStringLiteral("openNotchWidth"), m_openNotchWidth).toInt();
@@ -56,6 +59,9 @@ DEFINE_BOOL_SETTER(setLiquidGlass, m_liquidGlass, "liquidGlass", liquidGlassChan
         Q_EMIT Signal();                                      \
     }
 
+DEFINE_INT_SETTER(setGlassOpacity, m_glassOpacity, "glassOpacity", glassOpacityChanged)
+DEFINE_INT_SETTER(setGlassSheen, m_glassSheen, "glassSheen", glassSheenChanged)
+DEFINE_INT_SETTER(setGlassRim, m_glassRim, "glassRim", glassRimChanged)
 DEFINE_INT_SETTER(setClosedNotchWidth, m_closedNotchWidth, "closedNotchWidth", closedNotchWidthChanged)
 DEFINE_INT_SETTER(setClosedNotchHeight, m_closedNotchHeight, "closedNotchHeight", closedNotchHeightChanged)
 DEFINE_INT_SETTER(setOpenNotchWidth, m_openNotchWidth, "openNotchWidth", openNotchWidthChanged)

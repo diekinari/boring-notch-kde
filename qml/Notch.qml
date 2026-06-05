@@ -37,7 +37,9 @@ Window {
         anchors.fill: parent
         // Solid black normally; translucent dark "glass" when liquid glass is on
         // (the desktop behind is blurred by KWin — see NotchWindow::setGlass).
-        color: Config.liquidGlass ? Qt.rgba(0.04, 0.04, 0.06, 0.55) : "#000000"
+        // Fill opacity is configurable (Config.glassOpacity, percent).
+        color: Config.liquidGlass ? Qt.rgba(0.04, 0.04, 0.06, Config.glassOpacity / 100)
+                                  : "#000000"
         // Square top (flush with screen edge), rounded bottom — notch silhouette.
         // Bottom radius matches the macOS original: 14 closed, 24 open.
         topLeftRadius: 0
@@ -151,6 +153,8 @@ Window {
             anchors.fill: parent
             visible: Config.liquidGlass
             bottomRadius: root.expanded ? Config.openCornerRadius : Config.closedCornerRadius
+            sheen: Config.glassSheen / 100
+            rim: Config.glassRim / 100
         }
     }
 }

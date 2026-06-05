@@ -33,6 +33,7 @@ ApplicationWindow {
             Layout.fillWidth: true
             TabButton { text: qsTr("Appearance") }
             TabButton { text: qsTr("Notch") }
+            TabButton { text: qsTr("Glass") }
         }
 
         StackLayout {
@@ -114,12 +115,6 @@ ApplicationWindow {
                             checked: Config.showFaceAnimation
                             onToggled: value => Config.showFaceAnimation = value
                         }
-                        ToggleRow {
-                            label: qsTr("Liquid glass")
-                            subtitle: qsTr("Translucent frosted notch with a glassy sheen. Requires KWin's blur effect to be enabled.")
-                            checked: Config.liquidGlass
-                            onToggled: value => Config.liquidGlass = value
-                        }
                     }
 
                     SettingsGroup {
@@ -193,6 +188,46 @@ ApplicationWindow {
                         Button {
                             text: qsTr("Reset to defaults")
                             onClicked: Config.resetNotchGeometry()
+                        }
+                    }
+
+                    Item { Layout.fillHeight: true; Layout.preferredHeight: 18 }
+                }
+            }
+
+            // --- Glass page ----------------------------------------------
+            ScrollView {
+                id: glassScroll
+                clip: true
+                contentWidth: availableWidth
+
+                ColumnLayout {
+                    width: glassScroll.availableWidth
+                    spacing: 18
+
+                    SettingsGroup {
+                        title: qsTr("Liquid glass")
+                        Layout.topMargin: 18
+                        ToggleRow {
+                            label: qsTr("Enable liquid glass")
+                            subtitle: qsTr("Translucent frosted notch. Requires KWin's Blur desktop effect to be enabled.")
+                            checked: Config.liquidGlass
+                            onToggled: value => Config.liquidGlass = value
+                        }
+                        SpinRow {
+                            label: qsTr("Opacity (%)"); from: 0; to: 100
+                            value: Config.glassOpacity
+                            onEdited: newValue => Config.glassOpacity = newValue
+                        }
+                        SpinRow {
+                            label: qsTr("Sheen (%)"); from: 0; to: 100
+                            value: Config.glassSheen
+                            onEdited: newValue => Config.glassSheen = newValue
+                        }
+                        SpinRow {
+                            label: qsTr("Rim highlight (%)"); from: 0; to: 100
+                            value: Config.glassRim
+                            onEdited: newValue => Config.glassRim = newValue
                         }
                     }
 

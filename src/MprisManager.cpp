@@ -54,12 +54,15 @@ void MprisManager::addPlayer(const QString &service) {
     if (m_players.contains(service)) return;
     auto *player = new MprisPlayer(service, this);
     m_players.insert(service, player);
-    // A player switching to Playing should be able to steal focus.
-    connect(player, &MprisPlayer::playbackChanged, this,
-            &MprisManager::reevaluateActive);
+    // Stamp recency when a player is/starts playing, then re-pick the active one.
+    connect(player, &MprisPlayer::playbackChanged, this, [this, player]() {
+        if (player->isPlaying()) player->setActivitySeq(++m_seq);
+        reevaluateActive();
+    });
     // The switcher label uses the identity, which may load slightly later.
     connect(player, &MprisPlayer::metadataChanged, this,
             &MprisManager::playersChanged);
+    if (player->isPlaying()) player->setActivitySeq(++m_seq);
     Q_EMIT playersChanged();
 }
 
@@ -72,6 +75,18 @@ void MprisManager::removePlayer(const QString &service) {
     }
 }
 
+// Returns the player with the highest activity stamp among those matching pred.
+template <class Pred>
+static MprisPlayer *mostRecent(const QHash<QString, MprisPlayer *> &players,
+                               Pred pred) {
+    MprisPlayer *best = nullptr;
+    for (auto *p : players) {
+        if (!pred(p)) continue;
+        if (!best || p->activitySeq() >= best->activitySeq()) best = p;
+    }
+    return best;
+}
+
 void MprisManager::reevaluateActive() {
     MprisPlayer *best = nullptr;
 
@@ -80,11 +95,17 @@ void MprisManager::reevaluateActive() {
         best = m_players.value(m_manualService, nullptr);
         if (!best) m_manualService.clear();
     }
-    // 2) Otherwise prefer a currently-playing player, then keep the current one,
-    //    then fall back to any available player.
+    // 2) Prefer the most-recently-started currently-playing player.
     if (!best)
-        for (auto *p : std::as_const(m_players))
-            if (p->isPlaying()) { best = p; break; }
+        best = mostRecent(m_players, [](MprisPlayer *p) { return p->isPlaying(); });
+    // 3) Nobody is playing. If the active player has stopped/paused and another
+    //    player exists, move to the most-recent *other* one (so pausing the
+    //    foreground player hands the notch to the remaining one instead of
+    //    sticking). Otherwise keep the current player.
+    if (!best && m_active && !m_active->isPlaying()) {
+        best = mostRecent(m_players,
+                           [this](MprisPlayer *p) { return p != m_active; });
+    }
     if (!best && m_active && m_players.values().contains(m_active)) best = m_active;
     if (!best && !m_players.isEmpty()) best = *m_players.cbegin();
 
