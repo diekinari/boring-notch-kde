@@ -76,29 +76,61 @@ Window {
             TapHandler { onTapped: App.requestSettings() }
         }
 
-        // Collapsed content: tiny now-playing hint.
-        Row {
-            anchors.centerIn: parent
-            spacing: 8
+        // Collapsed content: macOS-style live activity — album art on the left,
+        // an audio visualizer on the right, flanking the (virtual) notch centre.
+        Item {
+            anchors.fill: parent
             visible: !root.expanded
             opacity: visible ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 150 } }
 
+            readonly property bool hasPlayer: Mpris.hasPlayer && Mpris.active
+
+            // Album art (left)
             Rectangle {
-                width: 6; height: 6; radius: 3
+                id: closedArt
+                anchors.left: parent.left
+                anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                color: Mpris.hasPlayer && Mpris.active && Mpris.active.isPlaying
-                       ? "#1db954" : "#555555"
+                width: Math.max(0, parent.height - 12)
+                height: width
+                radius: 5
+                color: "#1a1a1a"
+                clip: true
+                visible: parent.hasPlayer
+
+                Image {
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectCrop
+                    asynchronous: true
+                    cache: true
+                    source: Mpris.active ? (Mpris.active.artUrl || "") : ""
+                    visible: status === Image.Ready
+                }
+                Text {
+                    anchors.centerIn: parent
+                    visible: !Mpris.active || !Mpris.active.artUrl
+                    text: "♪"; color: "#555"; font.pixelSize: parent.height * 0.5
+                }
             }
-            Text {
+
+            // Visualizer (right)
+            Equalizer {
+                anchors.right: parent.right
+                anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
+                height: Math.max(6, parent.height * 0.5)
+                visible: parent.hasPlayer
+                active: parent.hasPlayer && Mpris.active.isPlaying
+            }
+
+            // Idle fallback when nothing is playing.
+            Text {
+                anchors.centerIn: parent
+                visible: !parent.hasPlayer
                 color: "#dddddd"
                 font.pixelSize: 12
-                elide: Text.ElideRight
-                width: 150
-                text: Mpris.hasPlayer && Mpris.active
-                      ? (Mpris.active.title.length ? Mpris.active.title : Mpris.active.identity)
-                      : "boring.notch"
+                text: "boring.notch"
             }
         }
 

@@ -44,6 +44,7 @@ qt_add_qml_module(boring-notch-kde
         qml/SettingsWindow.qml
         qml/components/MusicView.qml
         qml/components/MarqueeText.qml
+        qml/components/Equalizer.qml
 )
 
 target_link_libraries(boring-notch-kde PRIVATE

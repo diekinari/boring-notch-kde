@@ -13,6 +13,9 @@ and more.
 > - Media controls via **MPRIS** over D-Bus (works with Spotify, browsers, VLC,
 >   any MPRIS2 player) — play/pause, next/prev, title/artist/album art, a live
 >   **seek bar**, and a **player switcher** when several players are running
+> - Collapsed notch shows macOS-style live activity: album art (left) + an
+>   audio visualizer (right). The visualizer is a placeholder animation for now;
+>   real PipeWire/FFT audio is on the roadmap.
 > - **Multi-monitor**: a notch per connected display (on by default), rebuilt
 >   live when monitors are plugged/unplugged
 > - **System-tray icon** + right-click context menu on the notch
