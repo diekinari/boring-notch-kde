@@ -39,16 +39,18 @@ void NotchWindow::configureLayerShell(QQuickWindow *window, QScreen *screen) {
     layer->setScope(QStringLiteral("boring-notch"));
 }
 
-void NotchWindow::setGlass(QQuickWindow *window, bool enabled) {
+void NotchWindow::setGlass(QQuickWindow *window, bool enabled,
+                           const QRegion &region) {
     if (!window) return;
-    // Empty region == whole window. On Wayland this uses KWin's blur protocol;
-    // it simply does nothing if the compositor doesn't support blur.
-    KWindowEffects::enableBlurBehind(window, enabled);
+    // Region clips the blur to the rounded notch shape; without it KWin blurs
+    // the full window rect and the desktop shows through past the corners.
+    KWindowEffects::enableBlurBehind(window, enabled, region);
 }
 
 void NotchWindow::setFrost(QQuickWindow *window, bool enabled, qreal contrast,
-                           qreal intensity, qreal saturation) {
+                           qreal intensity, qreal saturation,
+                           const QRegion &region) {
     if (!window) return;
     KWindowEffects::enableBackgroundContrast(window, enabled, contrast, intensity,
-                                             saturation);
+                                             saturation, region);
 }

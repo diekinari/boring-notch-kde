@@ -2,11 +2,15 @@
 #include "AppSettings.h"
 #include "NotchWindow.h"
 
+#include <QBitmap>
 #include <QGuiApplication>
+#include <QPainter>
+#include <QPainterPath>
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickWindow>
+#include <QRegion>
 #include <QScreen>
 
 NotchManager::NotchManager(QQmlEngine *engine, AppSettings *settings,
@@ -48,13 +52,51 @@ void NotchManager::start() {
     rebuildNotches();
 }
 
+// A region shaped like the notch: square top, rounded bottom. Used to clip
+// KWin's blur/contrast so they don't bleed past the rounded corners.
+static QRegion roundedNotchRegion(int w, int h, int r) {
+    if (w <= 0 || h <= 0) return QRegion();
+    r = qBound(0, r, qMin(w / 2, h));
+
+    QBitmap bmp(w, h);
+    bmp.clear();
+    QPainter p(&bmp);
+    p.setRenderHint(QPainter::Antialiasing, false);
+    p.setPen(Qt::NoPen);
+    p.setBrush(Qt::color1);
+
+    QPainterPath path;
+    path.moveTo(0, 0);
+    path.lineTo(w, 0);
+    path.lineTo(w, h - r);
+    path.quadTo(w, h, w - r, h);
+    path.lineTo(r, h);
+    path.quadTo(0, h, 0, h - r);
+    path.closeSubpath();
+    p.drawPath(path);
+    p.end();
+
+    return QRegion(bmp);
+}
+
 void NotchManager::applyGlass() {
     for (QQuickWindow *win : std::as_const(m_notches)) applyGlassTo(win);
 }
 
 void NotchManager::applyGlassTo(QQuickWindow *win) {
     const bool glass = m_settings->liquidGlass();
-    NotchWindow::setGlass(win, glass && m_settings->glassBlur());
+
+    // Build a blur/contrast region matching the notch's current rounded shape.
+    // Pick the corner radius for the current (collapsed vs expanded) state.
+    const int w = win->width();
+    const int h = win->height();
+    const bool expanded =
+        h > (m_settings->closedNotchHeight() + m_settings->openNotchHeight()) / 2;
+    const int radius =
+        expanded ? m_settings->openCornerRadius() : m_settings->closedCornerRadius();
+    const QRegion region = roundedNotchRegion(w, h, radius);
+
+    NotchWindow::setGlass(win, glass && m_settings->glassBlur(), region);
 
     // Map the 0..100 "frost" strength onto KWin background-contrast params:
     // darker and more desaturated as it grows. 0 disables the effect.
@@ -62,7 +104,7 @@ void NotchManager::applyGlassTo(QQuickWindow *win) {
     NotchWindow::setFrost(win, frost > 0.0,
                           /*contrast*/ 1.0,
                           /*intensity*/ 1.0 - 0.4 * frost,
-                          /*saturation*/ 1.0 - 0.6 * frost);
+                          /*saturation*/ 1.0 - 0.6 * frost, region);
 }
 
 QList<QScreen *> NotchManager::targetScreens() const {
@@ -91,6 +133,14 @@ QQuickWindow *NotchManager::createNotch(QScreen *screen) {
     // before the window is shown.
     win->setScreen(screen);
     NotchWindow::configureLayerShell(win, screen);
+
+    // Re-apply the blur/contrast region whenever the notch resizes (expand /
+    // collapse), so the rounded clip keeps matching the shape.
+    connect(win, &QQuickWindow::widthChanged, this,
+            [this, win]() { applyGlassTo(win); });
+    connect(win, &QQuickWindow::heightChanged, this,
+            [this, win]() { applyGlassTo(win); });
+
     applyGlassTo(win);
     win->setVisible(true);
     qInfo() << "[notch] created notch on screen" << screen->name()
