@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 
 // Now-playing card bound to the active MPRIS player: album art, title/artist,
 // a live seek bar, transport controls, and (when several players are running)
@@ -77,19 +76,32 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             spacing: 6
 
-            // Player switcher: only shown when more than one player is running.
-            RowLayout {
+            // Player switcher chips: one per running player, active highlighted.
+            // Inline (not a popup) so nothing escapes the small notch surface.
+            Flow {
                 Layout.fillWidth: true
                 visible: Mpris.playerCount > 1
-                spacing: 4
-                Text {
-                    text: (card.player ? card.player.identity : qsTr("No player")) + "  ▾"
-                    color: switcherHover.hovered ? "white" : "#9a9a9a"
-                    font.pixelSize: 11
-                    elide: Text.ElideRight
-                    Layout.fillWidth: true
-                    HoverHandler { id: switcherHover; cursorShape: Qt.PointingHandCursor }
-                    TapHandler { onTapped: playerMenu.popup() }
+                spacing: 6
+                Repeater {
+                    model: card.playerList
+                    delegate: Rectangle {
+                        id: chip
+                        required property var modelData
+                        radius: 9
+                        height: 18
+                        width: chipLabel.implicitWidth + 16
+                        color: modelData.isActive ? "#1db954"
+                                                  : (chipHover.hovered ? "#4a4a4a" : "#3a3a3a")
+                        Text {
+                            id: chipLabel
+                            anchors.centerIn: parent
+                            text: chip.modelData.identity
+                            color: "white"
+                            font.pixelSize: 10
+                        }
+                        HoverHandler { id: chipHover; cursorShape: Qt.PointingHandCursor }
+                        TapHandler { onTapped: Mpris.activate(chip.modelData.serviceName) }
+                    }
                 }
             }
 
@@ -152,28 +164,13 @@ Item {
         }
     }
 
-    // --- Player switcher menu (populated from MprisManager.playerInfos) -------
+    // Player list for the switcher chips, refreshed when players come/go or the
+    // active one changes.
     property var playerList: Mpris.playerInfos()
     Connections {
         target: Mpris
         function onPlayersChanged() { card.playerList = Mpris.playerInfos() }
         function onActiveChanged() { card.playerList = Mpris.playerInfos() }
-    }
-
-    Menu {
-        id: playerMenu
-        Instantiator {
-            model: card.playerList
-            delegate: MenuItem {
-                required property var modelData
-                text: modelData.identity
-                checkable: true
-                checked: modelData.isActive
-                onTriggered: Mpris.activate(modelData.serviceName)
-            }
-            onObjectAdded: (index, object) => playerMenu.insertItem(index, object)
-            onObjectRemoved: (index, object) => playerMenu.removeItem(object)
-        }
     }
 
     // Inline transport button. Uses pointer handlers (not a MouseArea) so it

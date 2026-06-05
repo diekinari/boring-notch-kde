@@ -98,7 +98,14 @@ void MprisPlayer::applyMetadata(const QVariantMap &metadata) {
     m_album = metadata.value(QStringLiteral("xesam:album")).toString();
     m_artUrl = metadata.value(QStringLiteral("mpris:artUrl")).toString();
     m_length = metadata.value(QStringLiteral("mpris:length")).toLongLong();
-    m_trackId = metadata.value(QStringLiteral("mpris:trackid")).toString();
+
+    // mpris:trackid is a D-Bus object path ('o'); QVariant::toString() yields
+    // an empty string for it, which would silently disable SetPosition. Extract
+    // the path explicitly (falling back to a plain string for loose players).
+    const QVariant tid = metadata.value(QStringLiteral("mpris:trackid"));
+    m_trackId = tid.canConvert<QDBusObjectPath>()
+                    ? tid.value<QDBusObjectPath>().path()
+                    : tid.toString();
 
     // xesam:artist is a list of strings.
     const QStringList artists =
