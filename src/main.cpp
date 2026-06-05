@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     app.setQuitOnLastWindowClosed(false);
 
     AppSettings settings;
-    AppController controller;
+    AppController controller(&settings);
     MprisManager mpris;
 
     QQmlEngine engine;

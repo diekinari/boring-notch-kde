@@ -1,24 +1,24 @@
 import QtQuick
-import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
+import BoringNotch
 
 // Standalone settings window (a normal window, not the layer-shell overlay).
-// The Appearance page mirrors the macOS original's AppearanceSettingsView,
-// grouped into General / Media / Additional / Claude Code.
+// Strings go through Tr.t(...) so the UI re-translates live when the language
+// changes; the current language is pushed into Tr from Config below.
 ApplicationWindow {
     id: win
-    title: qsTr("Boring Notch — Settings")
-    width: 520
+    title: Tr.t("Boring Notch — Settings")
+    width: 540
     height: 600
-    minimumWidth: 420
+    minimumWidth: 440
     minimumHeight: 420
-    // NOTE: do not set `visibility` here — any non-Hidden value would force the
-    // window visible at startup. It stays hidden until NotchManager shows it.
     flags: Qt.Dialog
 
-    // Close with Escape (the compositor already provides the window's close
-    // button / titlebar).
+    // Drive the translation singleton from the persisted language setting.
+    Binding { target: Tr; property: "lang"; value: Config.language }
+
+    // Close with Escape (the compositor provides the titlebar / close button).
     Shortcut {
         sequences: [StandardKey.Close, StandardKey.Cancel]
         onActivated: win.close()
@@ -31,9 +31,9 @@ ApplicationWindow {
         TabBar {
             id: tabs
             Layout.fillWidth: true
-            TabButton { text: qsTr("Appearance") }
-            TabButton { text: qsTr("Notch") }
-            TabButton { text: qsTr("Glass") }
+            TabButton { text: Tr.t("Appearance") }
+            TabButton { text: Tr.t("Notch") }
+            TabButton { text: Tr.t("Glass") }
         }
 
         StackLayout {
@@ -52,55 +52,63 @@ ApplicationWindow {
                     spacing: 18
 
                     SettingsGroup {
-                        title: qsTr("General")
+                        title: Tr.t("General")
                         Layout.topMargin: 18
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Label { text: Tr.t("Language"); Layout.fillWidth: true }
+                            ComboBox {
+                                model: ["English", "Русский"]
+                                currentIndex: Config.language === "ru" ? 1 : 0
+                                onActivated: Config.language = (currentIndex === 1 ? "ru" : "en")
+                            }
+                        }
                         ToggleRow {
-                            label: qsTr("Always show tabs")
+                            label: Tr.t("Always show tabs")
                             checked: Config.alwaysShowTabs
                             onToggled: value => Config.alwaysShowTabs = value
                         }
                         ToggleRow {
-                            label: qsTr("Show settings icon in notch")
+                            label: Tr.t("Show settings icon in notch")
                             checked: Config.settingsIconInNotch
                             onToggled: value => Config.settingsIconInNotch = value
                         }
                         ToggleRow {
-                            label: qsTr("Show notch on all displays")
-                            subtitle: qsTr("Mirror the notch onto every connected monitor.")
+                            label: Tr.t("Show notch on all displays")
+                            subtitle: Tr.t("Mirror the notch onto every connected monitor.")
                             checked: Config.showOnAllDisplays
                             onToggled: value => Config.showOnAllDisplays = value
                         }
                     }
 
                     SettingsGroup {
-                        title: qsTr("Media")
+                        title: Tr.t("Media")
                         ToggleRow {
-                            label: qsTr("Colored spectrogram")
+                            label: Tr.t("Colored spectrogram")
                             checked: Config.coloredSpectrogram
                             onToggled: value => Config.coloredSpectrogram = value
                         }
                         ToggleRow {
-                            label: qsTr("Real-time audio waveform")
-                            subtitle: qsTr("Uses the playing app's audio via PipeWire. Slightly more CPU. (Visualizer not yet implemented.)")
+                            label: Tr.t("Real-time audio waveform")
+                            subtitle: Tr.t("Uses the playing app's audio via PipeWire. Slightly more CPU. (Visualizer not yet implemented.)")
                             checked: Config.realtimeAudioWaveform
                             onToggled: value => Config.realtimeAudioWaveform = value
                         }
                         ToggleRow {
-                            label: qsTr("Player tinting")
-                            subtitle: qsTr("Tint the notch with the album art's dominant color.")
+                            label: Tr.t("Player tinting")
+                            subtitle: Tr.t("Tint the notch with the album art's dominant color.")
                             checked: Config.playerColorTinting
                             onToggled: value => Config.playerColorTinting = value
                         }
                         ToggleRow {
-                            label: qsTr("Enable blur effect behind album art")
+                            label: Tr.t("Enable blur effect behind album art")
                             checked: Config.lightingEffect
                             onToggled: value => Config.lightingEffect = value
                         }
                         RowLayout {
                             Layout.fillWidth: true
-                            Label { text: qsTr("Slider color"); Layout.fillWidth: true }
+                            Label { text: Tr.t("Slider color"); Layout.fillWidth: true }
                             ComboBox {
-                                id: sliderColorBox
                                 model: ["Accent", "White", "Album"]
                                 currentIndex: Math.max(0, model.indexOf(Config.sliderColor))
                                 onActivated: Config.sliderColor = currentText
@@ -109,19 +117,19 @@ ApplicationWindow {
                     }
 
                     SettingsGroup {
-                        title: qsTr("Additional features")
+                        title: Tr.t("Additional features")
                         ToggleRow {
-                            label: qsTr("Show cool face animation while inactive")
+                            label: Tr.t("Show cool face animation while inactive")
                             checked: Config.showFaceAnimation
                             onToggled: value => Config.showFaceAnimation = value
                         }
                     }
 
                     SettingsGroup {
-                        title: qsTr("Claude Code")
+                        title: "Claude Code"
                         ToggleRow {
-                            label: qsTr("Show Claude Code activity")
-                            subtitle: qsTr("Shows in the notch when Claude Code is working, finished, or needs input. Requires the Claude Code status hook.")
+                            label: Tr.t("Show Claude Code activity")
+                            subtitle: Tr.t("Shows in the notch when Claude Code is working, finished, or needs input. Requires the Claude Code status hook.")
                             checked: Config.claudeIndicatorEnabled
                             onToggled: value => Config.claudeIndicatorEnabled = value
                         }
@@ -131,7 +139,7 @@ ApplicationWindow {
                 }
             }
 
-            // --- Notch (size & shape) page --------------------------------
+            // --- Notch page ----------------------------------------------
             ScrollView {
                 id: notchScroll
                 clip: true
@@ -142,54 +150,45 @@ ApplicationWindow {
                     spacing: 18
 
                     SettingsGroup {
-                        title: qsTr("Closed (collapsed) notch")
+                        title: Tr.t("Closed (collapsed) notch")
                         Layout.topMargin: 18
                         SpinRow {
-                            label: qsTr("Width"); from: 80; to: 1200
+                            label: Tr.t("Width"); from: 80; to: 1200
                             value: Config.closedNotchWidth
                             onEdited: newValue => Config.closedNotchWidth = newValue
                         }
                         SpinRow {
-                            label: qsTr("Height"); from: 12; to: 200
+                            label: Tr.t("Height"); from: 12; to: 200
                             value: Config.closedNotchHeight
                             onEdited: newValue => Config.closedNotchHeight = newValue
                         }
                         SpinRow {
-                            label: qsTr("Corner radius"); from: 0; to: 60
+                            label: Tr.t("Corner radius"); from: 0; to: 60
                             value: Config.closedCornerRadius
                             onEdited: newValue => Config.closedCornerRadius = newValue
                         }
                     }
 
                     SettingsGroup {
-                        title: qsTr("Open (expanded) notch")
+                        title: Tr.t("Open (expanded) notch")
                         SpinRow {
-                            label: qsTr("Width"); from: 200; to: 1600
+                            label: Tr.t("Width"); from: 200; to: 1600
                             value: Config.openNotchWidth
                             onEdited: newValue => Config.openNotchWidth = newValue
                         }
                         SpinRow {
-                            label: qsTr("Height"); from: 60; to: 800
+                            label: Tr.t("Height"); from: 60; to: 800
                             value: Config.openNotchHeight
                             onEdited: newValue => Config.openNotchHeight = newValue
                         }
                         SpinRow {
-                            label: qsTr("Corner radius"); from: 0; to: 80
+                            label: Tr.t("Corner radius"); from: 0; to: 80
                             value: Config.openCornerRadius
                             onEdited: newValue => Config.openCornerRadius = newValue
                         }
                     }
 
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: 18
-                        Layout.rightMargin: 18
-                        Item { Layout.fillWidth: true }
-                        Button {
-                            text: qsTr("Reset to defaults")
-                            onClicked: Config.resetNotchGeometry()
-                        }
-                    }
+                    ResetRow { onReset: Config.resetNotchGeometry() }
 
                     Item { Layout.fillHeight: true; Layout.preferredHeight: 18 }
                 }
@@ -206,30 +205,37 @@ ApplicationWindow {
                     spacing: 18
 
                     SettingsGroup {
-                        title: qsTr("Liquid glass")
+                        title: Tr.t("Liquid glass")
                         Layout.topMargin: 18
                         ToggleRow {
-                            label: qsTr("Enable liquid glass")
-                            subtitle: qsTr("Translucent frosted notch. Requires KWin's Blur desktop effect to be enabled.")
+                            label: Tr.t("Enable liquid glass")
                             checked: Config.liquidGlass
                             onToggled: value => Config.liquidGlass = value
                         }
+                        ToggleRow {
+                            label: Tr.t("Background blur (KWin)")
+                            subtitle: Tr.t("Frosted desktop behind the notch. Needs KWin's Blur desktop effect enabled.")
+                            checked: Config.glassBlur
+                            onToggled: value => Config.glassBlur = value
+                        }
                         SpinRow {
-                            label: qsTr("Opacity (%)"); from: 0; to: 100
+                            label: Tr.t("Opacity (%)"); from: 0; to: 100
                             value: Config.glassOpacity
                             onEdited: newValue => Config.glassOpacity = newValue
                         }
                         SpinRow {
-                            label: qsTr("Sheen (%)"); from: 0; to: 100
+                            label: Tr.t("Sheen (%)"); from: 0; to: 100
                             value: Config.glassSheen
                             onEdited: newValue => Config.glassSheen = newValue
                         }
                         SpinRow {
-                            label: qsTr("Rim highlight (%)"); from: 0; to: 100
+                            label: Tr.t("Rim highlight (%)"); from: 0; to: 100
                             value: Config.glassRim
                             onEdited: newValue => Config.glassRim = newValue
                         }
                     }
+
+                    ResetRow { onReset: Config.resetGlass() }
 
                     Item { Layout.fillHeight: true; Layout.preferredHeight: 18 }
                 }
@@ -242,15 +248,30 @@ ApplicationWindow {
     // A titled section. Declared children (the header Label) come first; any
     // rows the caller adds are appended after it in the same ColumnLayout.
     component SettingsGroup: ColumnLayout {
+        id: grp
         property string title
         Layout.fillWidth: true
         Layout.leftMargin: 18
         Layout.rightMargin: 18
         spacing: 8
         Label {
-            text: title
+            text: grp.title
             font.bold: true
             opacity: 0.7
+        }
+    }
+
+    // A right-aligned "Reset to defaults" button row.
+    component ResetRow: RowLayout {
+        id: rrow
+        signal reset()
+        Layout.fillWidth: true
+        Layout.leftMargin: 18
+        Layout.rightMargin: 18
+        Item { Layout.fillWidth: true }
+        Button {
+            text: Tr.t("Reset to defaults")
+            onClicked: rrow.reset()
         }
     }
 

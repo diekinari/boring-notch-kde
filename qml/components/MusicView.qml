@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import BoringNotch
 
 // Now-playing card bound to the active MPRIS player: album art, title/artist,
 // a live seek bar, transport controls, and (when several players are running)
@@ -107,7 +108,7 @@ Item {
 
             MarqueeText {
                 Layout.fillWidth: true
-                text: card.player ? card.player.title : "Nothing playing"
+                text: card.player ? card.player.title : Tr.t("Nothing playing")
                 color: "white"
                 font.pixelSize: 16
                 font.bold: true

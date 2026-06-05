@@ -37,16 +37,19 @@ void NotchManager::start() {
     // ...and when the user toggles "show on all displays".
     connect(m_settings, &AppSettings::showOnAllDisplaysChanged, this,
             &NotchManager::rebuildNotches);
-    // Re-apply blur-behind when the liquid-glass option toggles.
+    // Re-apply blur-behind when the glass or blur option toggles.
     connect(m_settings, &AppSettings::liquidGlassChanged, this,
+            &NotchManager::applyGlass);
+    connect(m_settings, &AppSettings::glassBlurChanged, this,
             &NotchManager::applyGlass);
 
     rebuildNotches();
 }
 
 void NotchManager::applyGlass() {
+    const bool blur = m_settings->liquidGlass() && m_settings->glassBlur();
     for (QQuickWindow *win : std::as_const(m_notches))
-        NotchWindow::setGlass(win, m_settings->liquidGlass());
+        NotchWindow::setGlass(win, blur);
 }
 
 QList<QScreen *> NotchManager::targetScreens() const {
@@ -75,7 +78,7 @@ QQuickWindow *NotchManager::createNotch(QScreen *screen) {
     // before the window is shown.
     win->setScreen(screen);
     NotchWindow::configureLayerShell(win, screen);
-    NotchWindow::setGlass(win, m_settings->liquidGlass());
+    NotchWindow::setGlass(win, m_settings->liquidGlass() && m_settings->glassBlur());
     win->setVisible(true);
     qInfo() << "[notch] created notch on screen" << screen->name()
             << "-> window now on" << (win->screen() ? win->screen()->name() : "<null>");

@@ -17,9 +17,11 @@ AppSettings::AppSettings(QObject *parent)
     m_showFaceAnimation = m_store.value(QStringLiteral("showFaceAnimation"), m_showFaceAnimation).toBool();
     m_claudeIndicatorEnabled = m_store.value(QStringLiteral("claudeIndicatorEnabled"), m_claudeIndicatorEnabled).toBool();
     m_liquidGlass = m_store.value(QStringLiteral("liquidGlass"), m_liquidGlass).toBool();
+    m_glassBlur = m_store.value(QStringLiteral("glassBlur"), m_glassBlur).toBool();
     m_glassOpacity = m_store.value(QStringLiteral("glassOpacity"), m_glassOpacity).toInt();
     m_glassSheen = m_store.value(QStringLiteral("glassSheen"), m_glassSheen).toInt();
     m_glassRim = m_store.value(QStringLiteral("glassRim"), m_glassRim).toInt();
+    m_language = m_store.value(QStringLiteral("language"), m_language).toString();
     m_closedNotchWidth = m_store.value(QStringLiteral("closedNotchWidth"), m_closedNotchWidth).toInt();
     m_closedNotchHeight = m_store.value(QStringLiteral("closedNotchHeight"), m_closedNotchHeight).toInt();
     m_openNotchWidth = m_store.value(QStringLiteral("openNotchWidth"), m_openNotchWidth).toInt();
@@ -48,6 +50,7 @@ DEFINE_BOOL_SETTER(setLightingEffect, m_lightingEffect, "lightingEffect", lighti
 DEFINE_BOOL_SETTER(setShowFaceAnimation, m_showFaceAnimation, "showFaceAnimation", showFaceAnimationChanged)
 DEFINE_BOOL_SETTER(setClaudeIndicatorEnabled, m_claudeIndicatorEnabled, "claudeIndicatorEnabled", claudeIndicatorEnabledChanged)
 DEFINE_BOOL_SETTER(setLiquidGlass, m_liquidGlass, "liquidGlass", liquidGlassChanged)
+DEFINE_BOOL_SETTER(setGlassBlur, m_glassBlur, "glassBlur", glassBlurChanged)
 
 #undef DEFINE_BOOL_SETTER
 
@@ -86,4 +89,18 @@ void AppSettings::setSliderColor(const QString &v) {
     m_sliderColor = v;
     store("sliderColor", v);
     Q_EMIT sliderColorChanged();
+}
+
+void AppSettings::setLanguage(const QString &v) {
+    if (m_language == v) return;
+    m_language = v;
+    store("language", v);
+    Q_EMIT languageChanged();
+}
+
+void AppSettings::resetGlass() {
+    setGlassOpacity(kDefGlassOpacity);
+    setGlassSheen(kDefGlassSheen);
+    setGlassRim(kDefGlassRim);
+    setGlassBlur(true);
 }

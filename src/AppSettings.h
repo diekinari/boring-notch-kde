@@ -29,9 +29,12 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool claudeIndicatorEnabled READ claudeIndicatorEnabled WRITE setClaudeIndicatorEnabled NOTIFY claudeIndicatorEnabledChanged)
     // --- Glass ---
     Q_PROPERTY(bool liquidGlass READ liquidGlass WRITE setLiquidGlass NOTIFY liquidGlassChanged)
+    Q_PROPERTY(bool glassBlur READ glassBlur WRITE setGlassBlur NOTIFY glassBlurChanged)
     Q_PROPERTY(int glassOpacity READ glassOpacity WRITE setGlassOpacity NOTIFY glassOpacityChanged)
     Q_PROPERTY(int glassSheen READ glassSheen WRITE setGlassSheen NOTIFY glassSheenChanged)
     Q_PROPERTY(int glassRim READ glassRim WRITE setGlassRim NOTIFY glassRimChanged)
+    // --- Language: "en" or "ru" ---
+    Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
     // --- Notch geometry (pixels) ---
     Q_PROPERTY(int closedNotchWidth READ closedNotchWidth WRITE setClosedNotchWidth NOTIFY closedNotchWidthChanged)
     Q_PROPERTY(int closedNotchHeight READ closedNotchHeight WRITE setClosedNotchHeight NOTIFY closedNotchHeightChanged)
@@ -54,9 +57,11 @@ public:
     bool showFaceAnimation() const { return m_showFaceAnimation; }
     bool claudeIndicatorEnabled() const { return m_claudeIndicatorEnabled; }
     bool liquidGlass() const { return m_liquidGlass; }
+    bool glassBlur() const { return m_glassBlur; }
     int glassOpacity() const { return m_glassOpacity; }
     int glassSheen() const { return m_glassSheen; }
     int glassRim() const { return m_glassRim; }
+    QString language() const { return m_language; }
     int closedNotchWidth() const { return m_closedNotchWidth; }
     int closedNotchHeight() const { return m_closedNotchHeight; }
     int openNotchWidth() const { return m_openNotchWidth; }
@@ -75,9 +80,14 @@ public:
     void setShowFaceAnimation(bool v);
     void setClaudeIndicatorEnabled(bool v);
     void setLiquidGlass(bool v);
+    void setGlassBlur(bool v);
     void setGlassOpacity(int v);
     void setGlassSheen(int v);
     void setGlassRim(int v);
+    void setLanguage(const QString &v);
+
+    // Restore the liquid-glass parameters to the built-in defaults.
+    Q_INVOKABLE void resetGlass();
     void setClosedNotchWidth(int v);
     void setClosedNotchHeight(int v);
     void setOpenNotchWidth(int v);
@@ -100,9 +110,11 @@ Q_SIGNALS:
     void showFaceAnimationChanged();
     void claudeIndicatorEnabledChanged();
     void liquidGlassChanged();
+    void glassBlurChanged();
     void glassOpacityChanged();
     void glassSheenChanged();
     void glassRimChanged();
+    void languageChanged();
     void closedNotchWidthChanged();
     void closedNotchHeightChanged();
     void openNotchWidthChanged();
@@ -129,9 +141,14 @@ private:
     bool m_showFaceAnimation = false;
     bool m_claudeIndicatorEnabled = false;
     bool m_liquidGlass = false;
-    int m_glassOpacity = 55; // percent: fill alpha
-    int m_glassSheen = 12;   // percent: top highlight
-    int m_glassRim = 20;     // percent: edge highlight
+    bool m_glassBlur = true;          // KWin blur-behind under the glass
+    static constexpr int kDefGlassOpacity = 55;
+    static constexpr int kDefGlassSheen = 12;
+    static constexpr int kDefGlassRim = 20;
+    int m_glassOpacity = kDefGlassOpacity; // percent: fill alpha
+    int m_glassSheen = kDefGlassSheen;     // percent: top highlight
+    int m_glassRim = kDefGlassRim;         // percent: edge highlight
+    QString m_language = QStringLiteral("en");
 
     // Defaults mirror the macOS original (see Notch.qml comments).
     static constexpr int kDefClosedW = 185;

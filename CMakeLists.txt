@@ -40,16 +40,20 @@ qt_add_executable(boring-notch-kde
     src/AppController.h
 )
 
+# Tr.qml is a QML singleton (pragma Singleton) — mark it so the module's
+# generated qmldir exposes it as a singleton type.
+set_source_files_properties(qml/Tr.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 qt_add_qml_module(boring-notch-kde
     URI BoringNotch
     VERSION 1.0
     QML_FILES
         qml/Notch.qml
         qml/SettingsWindow.qml
+        qml/Tr.qml
         qml/components/MusicView.qml
         qml/components/MarqueeText.qml
         qml/components/Equalizer.qml
-        qml/components/GlassOverlay.qml
 )
 
 target_link_libraries(boring-notch-kde PRIVATE

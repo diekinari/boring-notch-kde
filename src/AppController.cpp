@@ -1,4 +1,5 @@
 #include "AppController.h"
+#include "AppSettings.h"
 
 #include <QAction>
 #include <QApplication>
@@ -6,7 +7,8 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-AppController::AppController(QObject *parent) : QObject(parent) {}
+AppController::AppController(AppSettings *settings, QObject *parent)
+    : QObject(parent), m_settings(settings) {}
 
 void AppController::setupTray() {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -16,12 +18,17 @@ void AppController::setupTray() {
     }
 
     m_menu = new QMenu();
-    QAction *settingsAction = m_menu->addAction(tr("Settings…"));
-    connect(settingsAction, &QAction::triggered, this,
+    m_settingsAction = m_menu->addAction(QString());
+    connect(m_settingsAction, &QAction::triggered, this,
             &AppController::requestSettings);
     m_menu->addSeparator();
-    QAction *quitAction = m_menu->addAction(tr("Quit"));
-    connect(quitAction, &QAction::triggered, this, &AppController::quit);
+    m_quitAction = m_menu->addAction(QString());
+    connect(m_quitAction, &QAction::triggered, this, &AppController::quit);
+
+    retranslate();
+    if (m_settings)
+        connect(m_settings, &AppSettings::languageChanged, this,
+                &AppController::retranslate);
 
     m_tray = new QSystemTrayIcon(this);
     // Prefer the bundled icon; fall back to a generic theme icon.
@@ -39,4 +46,14 @@ void AppController::setupTray() {
 
 void AppController::quit() {
     qApp->quit();
+}
+
+void AppController::retranslate() {
+    const bool ru = m_settings && m_settings->language() == QLatin1String("ru");
+    if (m_settingsAction)
+        m_settingsAction->setText(ru ? QStringLiteral("Настройки…")
+                                     : QStringLiteral("Settings…"));
+    if (m_quitAction)
+        m_quitAction->setText(ru ? QStringLiteral("Выход")
+                                 : QStringLiteral("Quit"));
 }

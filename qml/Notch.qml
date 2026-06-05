@@ -32,6 +32,10 @@ Window {
     Behavior on width  { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
     Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
+    // Push the chosen language into the translation singleton so the notch's
+    // own strings (and the settings window) translate live.
+    Binding { target: Tr; property: "lang"; value: Config.language }
+
     Rectangle {
         id: shell
         anchors.fill: parent
@@ -48,6 +52,24 @@ Window {
         bottomRightRadius: root.expanded ? Config.openCornerRadius : Config.closedCornerRadius
         Behavior on bottomLeftRadius  { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Behavior on bottomRightRadius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+        // Glass rim: a bright edge, drawn as the shell's own border so it follows
+        // the rounded-bottom shape exactly (a separate rounded overlay's corners
+        // weren't being clipped on this Qt).
+        border.width: Config.liquidGlass ? 1 : 0
+        border.color: Qt.rgba(1, 1, 1, Config.glassRim / 100)
+
+        // Glass sheen: a soft top highlight. It fades to fully transparent well
+        // above the rounded bottom corners, so the (un-rounded) gradient rect
+        // never shows square corners.
+        Rectangle {
+            anchors.fill: parent
+            visible: Config.liquidGlass
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, Config.glassSheen / 100) }
+                GradientStop { position: 0.5; color: "transparent" }
+            }
+        }
 
         HoverHandler {
             id: notchHover
@@ -147,14 +169,5 @@ Window {
             Behavior on opacity { NumberAnimation { duration: 200 } }
         }
 
-        // Liquid-glass styling on top (sheen / specular / rim). Drawn last so the
-        // rim sits above content; only visible when the option is enabled.
-        GlassOverlay {
-            anchors.fill: parent
-            visible: Config.liquidGlass
-            bottomRadius: root.expanded ? Config.openCornerRadius : Config.closedCornerRadius
-            sheen: Config.glassSheen / 100
-            rim: Config.glassRim / 100
-        }
     }
 }
