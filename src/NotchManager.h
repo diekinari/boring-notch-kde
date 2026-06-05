@@ -32,6 +32,7 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void rebuildNotches();
+    void applyGlass();
 
 private:
     QList<QScreen *> targetScreens() const;

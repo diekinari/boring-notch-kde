@@ -16,6 +16,7 @@ AppSettings::AppSettings(QObject *parent)
     m_sliderColor = m_store.value(QStringLiteral("sliderColor"), m_sliderColor).toString();
     m_showFaceAnimation = m_store.value(QStringLiteral("showFaceAnimation"), m_showFaceAnimation).toBool();
     m_claudeIndicatorEnabled = m_store.value(QStringLiteral("claudeIndicatorEnabled"), m_claudeIndicatorEnabled).toBool();
+    m_liquidGlass = m_store.value(QStringLiteral("liquidGlass"), m_liquidGlass).toBool();
     m_closedNotchWidth = m_store.value(QStringLiteral("closedNotchWidth"), m_closedNotchWidth).toInt();
     m_closedNotchHeight = m_store.value(QStringLiteral("closedNotchHeight"), m_closedNotchHeight).toInt();
     m_openNotchWidth = m_store.value(QStringLiteral("openNotchWidth"), m_openNotchWidth).toInt();
@@ -43,6 +44,7 @@ DEFINE_BOOL_SETTER(setPlayerColorTinting, m_playerColorTinting, "playerColorTint
 DEFINE_BOOL_SETTER(setLightingEffect, m_lightingEffect, "lightingEffect", lightingEffectChanged)
 DEFINE_BOOL_SETTER(setShowFaceAnimation, m_showFaceAnimation, "showFaceAnimation", showFaceAnimationChanged)
 DEFINE_BOOL_SETTER(setClaudeIndicatorEnabled, m_claudeIndicatorEnabled, "claudeIndicatorEnabled", claudeIndicatorEnabledChanged)
+DEFINE_BOOL_SETTER(setLiquidGlass, m_liquidGlass, "liquidGlass", liquidGlassChanged)
 
 #undef DEFINE_BOOL_SETTER
 

@@ -114,6 +114,12 @@ ApplicationWindow {
                             checked: Config.showFaceAnimation
                             onToggled: value => Config.showFaceAnimation = value
                         }
+                        ToggleRow {
+                            label: qsTr("Liquid glass")
+                            subtitle: qsTr("Translucent frosted notch with a glassy sheen. Requires KWin's blur effect to be enabled.")
+                            checked: Config.liquidGlass
+                            onToggled: value => Config.liquidGlass = value
+                        }
                     }
 
                     SettingsGroup {

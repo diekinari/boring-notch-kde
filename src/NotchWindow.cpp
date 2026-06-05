@@ -3,6 +3,7 @@
 #include <QQuickWindow>
 #include <QScreen>
 
+#include <KWindowEffects>
 #include <LayerShellQt/Window>
 
 NotchWindow::NotchWindow(QObject *parent) : QObject(parent) {}
@@ -36,4 +37,11 @@ void NotchWindow::configureLayerShell(QQuickWindow *window, QScreen *screen) {
         LayerShellQt::Window::KeyboardInteractivityOnDemand);
 
     layer->setScope(QStringLiteral("boring-notch"));
+}
+
+void NotchWindow::setGlass(QQuickWindow *window, bool enabled) {
+    if (!window) return;
+    // Empty region == whole window. On Wayland this uses KWin's blur protocol;
+    // it simply does nothing if the compositor doesn't support blur.
+    KWindowEffects::enableBlurBehind(window, enabled);
 }

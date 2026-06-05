@@ -19,6 +19,8 @@ and more.
 > - **Multi-monitor**: a notch per connected display (on by default), rebuilt
 >   live when monitors are plugged/unplugged
 > - **System-tray icon** + right-click context menu on the notch
+> - Optional **liquid glass** look: translucent frosted notch (KWin blur) with a
+>   glassy sheen, drifting specular highlight and a bright rim
 > - **Settings window** with an Appearance page mirroring the macOS original,
 >   persisted via QSettings (`~/.config/TheBoringTeam/boring-notch-kde.conf`).
 >   Toggles for not-yet-built features (visualizer, tabs, face, Claude) are saved
@@ -44,7 +46,7 @@ Install the build/runtime deps on Arch:
 ```bash
 sudo pacman -S --needed base-devel cmake \
     qt6-base qt6-declarative qt6-wayland \
-    layer-shell-qt extra-cmake-modules
+    layer-shell-qt kwindowsystem extra-cmake-modules
 ```
 
 ## Build & run

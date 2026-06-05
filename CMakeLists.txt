@@ -17,6 +17,10 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2 D
 #   Arch package: layer-shell-qt
 find_package(LayerShellQt REQUIRED)
 
+# KF6 KWindowSystem: KWindowEffects::enableBlurBehind for the liquid-glass blur.
+#   Arch package: kwindowsystem
+find_package(KF6WindowSystem REQUIRED)
+
 qt_standard_project_setup(REQUIRES 6.5)
 
 # --- Target -----------------------------------------------------------------
@@ -45,6 +49,7 @@ qt_add_qml_module(boring-notch-kde
         qml/components/MusicView.qml
         qml/components/MarqueeText.qml
         qml/components/Equalizer.qml
+        qml/components/GlassOverlay.qml
 )
 
 target_link_libraries(boring-notch-kde PRIVATE
@@ -56,6 +61,7 @@ target_link_libraries(boring-notch-kde PRIVATE
     Qt6::QuickControls2
     Qt6::DBus
     LayerShellQt::Interface
+    KF6::WindowSystem
 )
 
 include(GNUInstallDirs)

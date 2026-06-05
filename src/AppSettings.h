@@ -27,6 +27,8 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool showFaceAnimation READ showFaceAnimation WRITE setShowFaceAnimation NOTIFY showFaceAnimationChanged)
     // --- Claude Code ---
     Q_PROPERTY(bool claudeIndicatorEnabled READ claudeIndicatorEnabled WRITE setClaudeIndicatorEnabled NOTIFY claudeIndicatorEnabledChanged)
+    // --- Glass ---
+    Q_PROPERTY(bool liquidGlass READ liquidGlass WRITE setLiquidGlass NOTIFY liquidGlassChanged)
     // --- Notch geometry (pixels) ---
     Q_PROPERTY(int closedNotchWidth READ closedNotchWidth WRITE setClosedNotchWidth NOTIFY closedNotchWidthChanged)
     Q_PROPERTY(int closedNotchHeight READ closedNotchHeight WRITE setClosedNotchHeight NOTIFY closedNotchHeightChanged)
@@ -48,6 +50,7 @@ public:
     QString sliderColor() const { return m_sliderColor; }
     bool showFaceAnimation() const { return m_showFaceAnimation; }
     bool claudeIndicatorEnabled() const { return m_claudeIndicatorEnabled; }
+    bool liquidGlass() const { return m_liquidGlass; }
     int closedNotchWidth() const { return m_closedNotchWidth; }
     int closedNotchHeight() const { return m_closedNotchHeight; }
     int openNotchWidth() const { return m_openNotchWidth; }
@@ -65,6 +68,7 @@ public:
     void setSliderColor(const QString &v);
     void setShowFaceAnimation(bool v);
     void setClaudeIndicatorEnabled(bool v);
+    void setLiquidGlass(bool v);
     void setClosedNotchWidth(int v);
     void setClosedNotchHeight(int v);
     void setOpenNotchWidth(int v);
@@ -86,6 +90,7 @@ Q_SIGNALS:
     void sliderColorChanged();
     void showFaceAnimationChanged();
     void claudeIndicatorEnabledChanged();
+    void liquidGlassChanged();
     void closedNotchWidthChanged();
     void closedNotchHeightChanged();
     void openNotchWidthChanged();
@@ -111,6 +116,7 @@ private:
     QString m_sliderColor = QStringLiteral("Accent");
     bool m_showFaceAnimation = false;
     bool m_claudeIndicatorEnabled = false;
+    bool m_liquidGlass = false;
 
     // Defaults mirror the macOS original (see Notch.qml comments).
     static constexpr int kDefClosedW = 185;

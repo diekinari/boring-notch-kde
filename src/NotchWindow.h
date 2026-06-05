@@ -19,4 +19,8 @@ public:
     // Promote an already-created QQuickWindow to a top-anchored layer surface
     // bound to the given output. Must be called before the window is shown.
     static void configureLayerShell(QQuickWindow *window, QScreen *screen);
+
+    // Ask KWin to blur the desktop behind the (translucent) window — the
+    // "frosted glass" part of the liquid-glass look. No-op off KDE/KWin.
+    static void setGlass(QQuickWindow *window, bool enabled);
 };
