@@ -11,7 +11,8 @@ and more.
 > **Status: early scaffold / MVP.** Implemented so far:
 > - Top-edge layer-shell overlay (Wayland) that expands on hover
 > - Media controls via **MPRIS** over D-Bus (works with Spotify, browsers, VLC,
->   any MPRIS2 player) — play/pause, next/prev, title/artist/album art
+>   any MPRIS2 player) — play/pause, next/prev, title/artist/album art, a live
+>   **seek bar**, and a **player switcher** when several players are running
 > - **Multi-monitor**: a notch per connected display (on by default), rebuilt
 >   live when monitors are plugged/unplugged
 > - **System-tray icon** + right-click context menu on the notch
@@ -176,15 +177,16 @@ qml/
 ## Roadmap
 
 1. ✅ Top-edge overlay + MPRIS media controls (MVP)
-2. Seek bar + live position; player switcher when several are active
-3. Battery indicator (UPower)
-4. Calendar (Akonadi/CalDAV)
-5. Audio visualizer (PipeWire)
-6. File shelf with drag-and-drop
-7. System OSD replacement (volume/brightness)
-8. Webcam mirror (V4L2)
-9. Global shortcuts (KGlobalAccel) + settings UI
-10. X11 fallback, multi-monitor, AUR package
+2. ✅ Seek bar + live position; player switcher when several are active
+3. ✅ Multi-monitor; tray + settings window (Appearance + Notch size)
+4. Battery indicator (UPower)
+5. Calendar (Akonadi/CalDAV)
+6. Audio visualizer (PipeWire)
+7. File shelf with drag-and-drop
+8. System OSD replacement (volume/brightness)
+9. Webcam mirror (V4L2)
+10. Global shortcuts (KGlobalAccel) + settings UI
+11. X11 fallback, AUR package
 
 ## License
 

@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QHash>
 #include <QList>
+#include <QVariantList>
 
 // Full definition required (not just a forward declaration): MprisManager
 // exposes Q_PROPERTY(MprisPlayer *active ...), and Qt6's moc needs the pointed-to
@@ -17,15 +18,23 @@ class MprisManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(MprisPlayer *active READ active NOTIFY activeChanged)
     Q_PROPERTY(bool hasPlayer READ hasPlayer NOTIFY activeChanged)
+    Q_PROPERTY(int playerCount READ playerCount NOTIFY playersChanged)
 
 public:
     explicit MprisManager(QObject *parent = nullptr);
 
     MprisPlayer *active() const { return m_active; }
     bool hasPlayer() const { return m_active != nullptr; }
+    int playerCount() const { return m_players.size(); }
+
+    // List of {serviceName, identity, isActive} for the player switcher.
+    Q_INVOKABLE QVariantList playerInfos() const;
+    // Manually make a given player active (and keep it active until it goes away).
+    Q_INVOKABLE void activate(const QString &serviceName);
 
 Q_SIGNALS:
     void activeChanged();
+    void playersChanged();
 
 private Q_SLOTS:
     void onNameOwnerChanged(const QString &name, const QString &oldOwner,
@@ -40,4 +49,5 @@ private:
 
     QHash<QString, MprisPlayer *> m_players; // service name -> player
     MprisPlayer *m_active = nullptr;
+    QString m_manualService; // user-pinned player, empty = automatic
 };

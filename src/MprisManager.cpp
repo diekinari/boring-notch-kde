@@ -4,6 +4,7 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusReply>
+#include <QVariantMap>
 
 namespace {
 constexpr auto kMprisPrefix = "org.mpris.MediaPlayer2.";
@@ -56,28 +57,63 @@ void MprisManager::addPlayer(const QString &service) {
     // A player switching to Playing should be able to steal focus.
     connect(player, &MprisPlayer::playbackChanged, this,
             &MprisManager::reevaluateActive);
+    // The switcher label uses the identity, which may load slightly later.
+    connect(player, &MprisPlayer::metadataChanged, this,
+            &MprisManager::playersChanged);
+    Q_EMIT playersChanged();
 }
 
 void MprisManager::removePlayer(const QString &service) {
     if (auto *player = m_players.take(service)) {
         if (m_active == player) m_active = nullptr;
+        if (m_manualService == service) m_manualService.clear();
         player->deleteLater();
+        Q_EMIT playersChanged();
     }
 }
 
 void MprisManager::reevaluateActive() {
     MprisPlayer *best = nullptr;
 
-    // Prefer a currently-playing player; otherwise keep the current one if it
-    // still exists; otherwise fall back to any available player.
-    for (auto *p : std::as_const(m_players)) {
-        if (p->isPlaying()) { best = p; break; }
+    // 1) Honour a manual pick while that player still exists.
+    if (!m_manualService.isEmpty()) {
+        best = m_players.value(m_manualService, nullptr);
+        if (!best) m_manualService.clear();
     }
+    // 2) Otherwise prefer a currently-playing player, then keep the current one,
+    //    then fall back to any available player.
+    if (!best)
+        for (auto *p : std::as_const(m_players))
+            if (p->isPlaying()) { best = p; break; }
     if (!best && m_active && m_players.values().contains(m_active)) best = m_active;
     if (!best && !m_players.isEmpty()) best = *m_players.cbegin();
 
     if (best != m_active) {
         m_active = best;
+        Q_EMIT activeChanged();
+    }
+}
+
+QVariantList MprisManager::playerInfos() const {
+    QVariantList list;
+    for (auto it = m_players.cbegin(); it != m_players.cend(); ++it) {
+        MprisPlayer *p = it.value();
+        QVariantMap m;
+        m[QStringLiteral("serviceName")] = it.key();
+        m[QStringLiteral("identity")] =
+            p->identity().isEmpty() ? it.key() : p->identity();
+        m[QStringLiteral("isActive")] = (p == m_active);
+        list.append(m);
+    }
+    return list;
+}
+
+void MprisManager::activate(const QString &serviceName) {
+    MprisPlayer *p = m_players.value(serviceName, nullptr);
+    if (!p) return;
+    m_manualService = serviceName;
+    if (m_active != p) {
+        m_active = p;
         Q_EMIT activeChanged();
     }
 }

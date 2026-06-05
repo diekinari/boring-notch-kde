@@ -2,6 +2,7 @@
 
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusMessage>
 #include <QDBusReply>
 #include <QDBusMetaType>
 #include <QDBusObjectPath>
@@ -35,11 +36,14 @@ MprisPlayer::MprisPlayer(const QString &serviceName, QObject *parent)
 }
 
 qlonglong MprisPlayer::position() const {
-    if (!m_player) return 0;
-    auto bus = QDBusConnection::sessionBus();
-    QDBusInterface props(m_serviceName, kObjectPath, kPropsIface, bus);
-    QVariant v = getProp(&props, kPlayerIface, QStringLiteral("Position"));
-    return v.isValid() ? v.toLongLong() : 0;
+    // Called on a timer (~2 Hz) for the seek bar, so build the message directly
+    // instead of a QDBusInterface (which would re-introspect the service each call).
+    QDBusMessage msg = QDBusMessage::createMethodCall(
+        m_serviceName, QLatin1String(kObjectPath), QLatin1String(kPropsIface),
+        QStringLiteral("Get"));
+    msg << QString::fromLatin1(kPlayerIface) << QStringLiteral("Position");
+    QDBusReply<QVariant> reply = QDBusConnection::sessionBus().call(msg);
+    return reply.isValid() ? reply.value().toLongLong() : 0;
 }
 
 void MprisPlayer::playPause() {
